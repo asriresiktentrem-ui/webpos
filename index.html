@@ -111,7 +111,6 @@
     </div>
 
     <script>
-        // URL WEB APP YANG BARU SUDAH DITANAM DI SINI
         const API_URL = "https://script.google.com/macros/s/AKfycbwzLi4aDcV9luMShYuUhTTPCQARE86XgqTP5uEX7U0YL-_p5esqTpicwYZzc83ZwtnO/exec";
 
         document.getElementById('tanggal').value = new Date().toISOString().substring(0, 10);
@@ -177,7 +176,6 @@
 
             const mockId = "KOS-" + Date.now();
             
-            // Injeksi data mentah ke dalam komponen struk kuitansi visual sebelum fetch
             document.getElementById('stId').innerText = mockId;
             document.getElementById('stKamar').innerText = payload.nomor_kamar;
             document.getElementById('stPenyewa').innerText = payload.nama_penyewa;
@@ -202,7 +200,7 @@
             } catch (error) {
                 console.error(error);
                 alert("Koneksi bermasalah.");
-            } else {
+            } finally {
                 btnSubmit.disabled = false;
                 btnSubmit.innerText = "KIRIM LAPORAN PEMBAYARAN";
             }
