@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Bukti Pembayaran Kos</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
     <style>
         #notaVisual {
             background-color: #ffffff !important;
@@ -47,7 +47,7 @@
         <div id="headerArea" class="bg-indigo-600 text-white p-4 rounded-xl shadow-md text-center">
             <h1 class="text-xl font-bold">Sistem Pembayaran Kos</h1>
             <p class="text-xs opacity-80">Formulir Laporan Penyewa Kamar</p>
-            <p class="text-[10px] font-mono mt-1 opacity-60">V 1.7</p>
+            <p class="text-[10px] font-mono mt-1 opacity-60">V 1.8</p>
         </div>
 
         <div id="formArea" class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
@@ -198,6 +198,7 @@
             }
         });
 
+        // LOGIKA BARU MENGGUNAKAN HTML-TO-IMAGE
         document.getElementById('btnDownloadNota').addEventListener('click', function() {
             var btn = this;
             var originalText = btn.innerHTML;
@@ -207,28 +208,24 @@
             var targetElement = document.getElementById('notaVisual');
             var currentId = document.getElementById('stId').innerText;
             
-            // Konfigurasi performa tinggi untuk konversi objek kuitansi secara cepat
-            html2canvas(targetElement, {
-                scale: 2,
-                backgroundColor: "#ffffff",
-                logging: false,
-                useCORS: false,
-                allowTaint: true
-            }).then(canvas => {
-                var imageBase64 = canvas.toDataURL("image/png");
-                
+            htmlToImage.toPng(targetElement, { 
+                backgroundColor: '#ffffff',
+                pixelRatio: 3 
+            })
+            .then(function (dataUrl) {
                 var link = document.createElement('a');
                 link.download = `Struk_Laporan_${currentId}.png`;
-                link.href = imageBase64;
+                link.href = dataUrl;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
                 
                 btn.innerHTML = "✅ Gambar Berhasil Disimpan";
                 btn.disabled = false;
-            }).catch(err => {
-                console.error(err);
-                alert("Gagal mengunduh: " + err.message);
+            })
+            .catch(function (error) {
+                console.error('oops, something went wrong!', error);
+                alert("Gagal memproses gambar kuitansi: " + error.message);
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             });
