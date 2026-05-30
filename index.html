@@ -45,7 +45,7 @@
         <div id="headerArea" class="bg-indigo-600 text-white p-4 rounded-xl shadow-md text-center">
             <h1 class="text-xl font-bold">Sistem Pembayaran Kos</h1>
             <p class="text-xs opacity-80">Formulir Laporan Penyewa Kamar</p>
-            <p class="text-[10px] font-mono mt-1 opacity-60">V 1.2</p>
+            <p class="text-[10px] font-mono mt-1 opacity-60">V 1.3 (Error Debug Mode)</p>
         </div>
 
         <div id="formArea" class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
@@ -168,22 +168,31 @@
             document.getElementById('stTotal').innerText = maskInput.value;
             document.getElementById('stTanggal').innerText = payload.tanggal;
 
-            document.getElementById('headerArea').style.display = 'none';
-            document.getElementById('formArea').style.display = 'none';
-            wrapperStatus.classList.remove('hidden');
-
             try {
-                await fetch(API_URL, {
+                // DI SINI KITA BUANG 'no-cors' AGAR BISA MENANGKAP RESPONS ERROR ASLI DARI GOOGLE
+                const response = await fetch(API_URL, {
                     method: 'POST',
-                    mode: 'no-cors', 
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(payload)
                 });
-                form.reset();
-                alert("Laporan pembayaran sukses dikirim!");
+
+                const result = await response.json();
+                
+                if (result.status === "success") {
+                    document.getElementById('headerArea').style.display = 'none';
+                    document.getElementById('formArea').style.display = 'none';
+                    wrapperStatus.classList.remove('hidden');
+                    form.reset();
+                    alert("Laporan pembayaran sukses dikirim dan disimpan!");
+                } else {
+                    // Menangkap error logic dari try-catch dalam GAS
+                    alert("Gagal dari Server GAS:\n" + result.message);
+                }
+
             } catch (error) {
+                // Menangkap error jaringan / CORS / Keamanan Google pembatasan akses
                 console.error(error);
-                alert("Koneksi ke sistem cloud bermasalah.");
+                alert("DEBUG ERROR SYSTEM:\n" + error.message + "\n\nKemungkinan besar Web App Anda belum diizinkan akses / Otorisasi Akun Google.");
             } finally {
                 btnSubmit.disabled = false;
                 btnSubmit.innerText = "KIRIM LAPORAN PEMBAYARAN";
