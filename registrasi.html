@@ -11,8 +11,9 @@
     <div class="max-w-md mx-auto space-y-6">
         
         <div id="headerArea" class="bg-blue-600 text-white p-4 rounded-xl shadow-md text-center">
-            <h1 class="text-xl font-bold">Formulir Registrasi Hunian</h1>
-            <p class="text-xs opacity-80">Sistem Pendataan Calon Penyewa Kos</p>
+            <h1 class="text-xl font-bold">Griya Ananda</h1>
+            <p class="text-xs opacity-90">Formulir Registrasi Hunian Kos</p>
+            <p class="text-[10px] font-mono mt-1 opacity-60">V 1.0</p>
         </div>
 
         <div id="formArea" class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
@@ -92,12 +93,17 @@
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbx-Gc8YmYkyHA_5h7ueZgG_6pj4Sc8iHczQQxq-StiqCgJVCLzSs4jXjPNSA7xcjNv0/exec";
 
+        // Ambil data kamar otomatis saat halaman dibuka dengan query parameter eksplisit
         window.addEventListener('DOMContentLoaded', async () => {
             const selectKamar = document.getElementById('noKamar');
             try {
-                const response = await fetch(API_URL);
+                const response = await fetch(API_URL + "?action=getKamar");
                 const result = await response.json();
                 if (result.status === "success") {
+                    if (result.data.length === 0) {
+                        selectKamar.innerHTML = '<option value="">Daftar kamar di DataMaster kosong</option>';
+                        return;
+                    }
                     selectKamar.innerHTML = '<option value="">-- Pilih Nomor Kamar --</option>';
                     result.data.forEach(kamar => {
                         const opt = document.createElement('option');
