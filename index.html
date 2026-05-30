@@ -7,7 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        /* Desain struk dikunci total, hanya warna oklch yang diredam ke format Hex standar */
+        /* Desain Nota Terkunci Menggunakan Pure CSS Standar (Bebas OKLCH) */
         #notaVisual {
             background-color: #ffffff !important;
             padding: 24px !important;
@@ -17,12 +17,26 @@
             width: 100% !important;
             max-width: 320px !important;
             margin: 0 auto !important;
-            font-family: sans-serif !important;
+            font-family: Arial, sans-serif !important;
             color: #1f2937 !important;
+            box-sizing: border-box !important;
         }
-        .nota-icon { font-size: 32px !important; margin-bottom: 8px !important; }
-        .nota-title { font-size: 20px !important; font-weight: bold !important; margin-bottom: 4px !important; color: #1e293b !important; }
-        .nota-id { font-size: 11px !important; color: #6b7280 !important; font-family: monospace !important; margin-bottom: 16px !important; }
+        .nota-icon { 
+            font-size: 32px !important; 
+            margin-bottom: 8px !important; 
+        }
+        .nota-title { 
+            font-size: 20px !important; 
+            font-weight: bold !important; 
+            margin-bottom: 4px !important; 
+            color: #1e293b !important; 
+        }
+        .nota-id { 
+            font-size: 11px !important; 
+            color: #6b7280 !important; 
+            font-family: monospace !important; 
+            margin-bottom: 16px !important; 
+        }
         .nota-status {
             background-color: #fef3c7 !important;
             color: #92400e !important;
@@ -32,15 +46,36 @@
             font-weight: bold !important;
             border: 1px solid #fde68a !important;
             margin-bottom: 16px !important;
+            text-align: center !important;
         }
-        .nota-details { text-align: left !important; font-family: monospace !important; font-size: 12px !important; margin-bottom: 16px !important; border-top: 1px dashed #9ca3af !important; padding-top: 8px !important; }
-        .nota-flex { display: flex !important; justify-content: space-between !important; margin-bottom: 4px !important; color: #1f2937 !important; }
-        .nota-total { border-top: 1px dashed #9ca3af !important; padding-top: 4px !important; font-weight: bold !important; color: #4f46e5 !important; font-size: 13px !important; }
-        .nota-footer { font-size: 11px !important; color: #6b7280 !important; line-height: 1.4 !important; border-top: 1px dashed #9ca3af !important; padding-top: 8px !important; }
-        
-        /* Bypass rule pembersihan oklch agar html2canvas tidak crash */
-        #notaVisual * {
-            color: inherit;
+        .nota-details { 
+            text-align: left !important; 
+            font-family: monospace !important; 
+            font-size: 12px !important; 
+            margin-bottom: 16px !important; 
+            border-top: 1px dashed #9ca3af !important; 
+            padding-top: 8px !important; 
+        }
+        .nota-flex { 
+            display: flex !important; 
+            justify-content: space-between !important; 
+            margin-bottom: 6px !important; 
+            color: #1f2937 !important; 
+        }
+        .nota-total { 
+            border-top: 1px dashed #9ca3af !important; 
+            padding-top: 6px !important; 
+            font-weight: bold !important; 
+            color: #4f46e5 !important; 
+            font-size: 14px !important; 
+        }
+        .nota-footer { 
+            font-size: 11px !important; 
+            color: #6b7280 !important; 
+            line-height: 1.4 !important; 
+            border-top: 1px dashed #9ca3af !important; 
+            padding-top: 8px !important; 
+            text-align: center !important;
         }
     </style>
 </head>
@@ -51,7 +86,7 @@
         <div id="headerArea" class="bg-indigo-600 text-white p-4 rounded-xl shadow-md text-center">
             <h1 class="text-xl font-bold">Sistem Pembayaran Kos</h1>
             <p class="text-xs opacity-80">Formulir Laporan Penyewa Kamar</p>
-            <p class="text-[10px] font-mono mt-1 opacity-60">V 1.5</p>
+            <p class="text-[10px] font-mono mt-1 opacity-60">V 1.6</p>
         </div>
 
         <div id="formArea" class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
@@ -87,16 +122,16 @@
         <div id="wrapperStatus" class="hidden space-y-4">
             <div id="notaVisual">
                 <div class="nota-icon">⏳</div>
-                <div style="color: #1e293b !important;" class="nota-title">Laporan Terkirim!</div>
-                <div style="color: #6b7280 !important;" class="nota-id">ID: <span id="stId"></span></div>
+                <div class="nota-title">Laporan Terkirim!</div>
+                <div class="nota-id">ID: <span id="stId"></span></div>
                 <div class="nota-status">⚠️ Status: Menunggu Verifikasi Owner</div>
                 <div class="nota-details">
                     <div class="nota-flex"><span>KAMAR   :</span><span id="stKamar"></span></div>
                     <div class="nota-flex"><span>PENYEWA :</span><span id="stPenyewa"></span></div>
                     <div class="nota-flex"><span>TANGGAL :</span><span id="stTanggal"></span></div>
-                    <div class="nota-flex nota-total"><span style="color: #4f46e5 !important;">TOTAL   :</span><span style="color: #4f46e5 !important;" id="stTotal"></span></div>
+                    <div class="nota-flex nota-total"><span>TOTAL   :</span><span id="stTotal"></span></div>
                 </div>
-                <div style="color: #6b7280 !important;" class="nota-footer">
+                <div class="nota-footer">
                     Data & file bukti transfer Anda telah disimpan di cloud storage sistem internal kos. Pemilik kos akan segera memeriksa laporan ini.
                 </div>
             </div>
@@ -211,28 +246,45 @@
             var targetElement = document.getElementById('notaVisual');
             var currentId = document.getElementById('stId').innerText;
             
+            // Konfigurasi ketat html2canvas untuk menghindari pembacaan scope global CSS Tailwind 4
             html2canvas(targetElement, {
                 scale: 3,
                 backgroundColor: "#ffffff",
-                useCORS: true,
+                useCORS: false,
                 allowTaint: false,
-                logging: false,
-                height: targetElement.offsetHeight,
-                width: targetElement.offsetWidth
+                ignoreElements: function(element) {
+                    // Blokir elemen luar yang membawa class tailwind masuk ke engine render
+                    if(element.tagName === 'BODY' || element.id === 'headerArea') return true;
+                }
             }).then(canvas => {
                 var imageBase64 = canvas.toDataURL("image/png");
+                
+                // Eksekusi Download Utama
                 var link = document.createElement('a');
                 link.download = `Struk_Laporan_${currentId}.png`;
                 link.href = imageBase64;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
+                
                 btn.innerHTML = "✅ Gambar Berhasil Disimpan";
+                btn.disabled = false;
             }).catch(err => {
                 console.error(err);
-                alert("Gagal memproses gambar kuitansi: " + err.message);
-                btn.innerHTML = originalText;
-                btn.disabled = false;
+                // EMERGENSI FALLBACK: Jika skrip lokal browser macet, buka gambar di tab baru agar user bisa manual 'Tekan Lama & Simpan'
+                try {
+                    html2canvas(targetElement, { scale: 2, backgroundColor: "#ffffff" }).then(canvas => {
+                        var imgData = canvas.toDataURL("image/png");
+                        var newWin = window.open();
+                        newWin.document.write('<body style="margin:0; background:#f3f4f6; display:flex; justify-content:center; align-items:center; min-height:100vh;"><img src="' + imgData + '" style="max-width:100%; border-radius:12px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);"/><p style="position:absolute; bottom:20px; font-family:sans-serif; font-size:14px; background:rgba(0,0,0,0.6); color:#fff; padding:8px 16px; border-radius:20px;">Tekan lama gambar untuk menyimpan ke galeri</p></body>');
+                        btn.innerHTML = "📸 Selesai (Buka di Tab Baru)";
+                        btn.disabled = false;
+                    });
+                } catch(e) {
+                    alert("Gagal memproses struk: " + err.message);
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
             });
         });
     </script>
