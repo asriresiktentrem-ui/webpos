@@ -3,167 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web POS - Simple Payment</title>
+    <title>Form Bukti Pembayaran Kos</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body class="bg-gray-100 min-h-screen p-4 font-sans text-gray-800">
 
     <div class="max-w-md mx-auto space-y-6">
         
-        <div class="bg-blue-600 text-white p-4 rounded-xl shadow-md text-center">
-            <h1 class="text-xl font-bold">Internal Web POS</h1>
-            <p class="text-xs opacity-80">Database: Google Sheets API</p>
+        <div class="bg-indigo-600 text-white p-4 rounded-xl shadow-md text-center">
+            <h1 class="text-xl font-bold">Sistem Pembayaran Kos</h1>
+            <p class="text-xs opacity-80">Formulir Laporan Penyewa Kamar</p>
         </div>
 
         <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-            <h2 class="text-lg font-bold mb-4 border-b pb-2 text-gray-700">Input Pembayaran</h2>
+            <h2 class="text-lg font-bold mb-4 border-b pb-2 text-gray-700">Lapor Pembayaran</h2>
             <form id="paymentForm" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">NAMA TENANT</label>
-                    <input type="text" id="namaTenant" required placeholder="Contoh: Tenant Kopi A" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">NOMOR KAMAR</label>
+                    <input type="text" id="nomorKamar" required placeholder="Contoh: Kamar 05" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">NAMA PENYEWA</label>
+                    <input type="text" id="namaPenyewa" required placeholder="Contoh: Yusup Amroni" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1">JUMLAH BAYAR (Rp)</label>
-                    <input type="number" id="jumlahBayar" required placeholder="Contoh: 50000" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                    <input type="number" id="jumlahBayar" required placeholder="Contoh: 1500000" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">METODE PEMBAYARAN</label>
-                    <select id="metode" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm bg-white">
-                        <option value="QRIS">QRIS</option>
-                        <option value="TUNAI">TUNAI</option>
-                        <option value="TRANSFER">TRANSFER</option>
-                    </select>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">TANGGAL TRANSFER</label>
+                    <input type="date" id="tanggal" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">TANGGAL</label>
-                    <input type="date" id="tanggal" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">UPLOAD BUKTI TRANSFER</label>
+                    <input type="file" id="fileBukti" required accept="image/*,application/pdf" class="w-full p-2 border rounded-lg text-sm bg-gray-50 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
                 </div>
-                <button type="submit" id="btnSubmit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition text-sm shadow-md cursor-pointer">
-                    SIMPAN & PROSES NOTA
+                <button type="submit" id="btnSubmit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg transition text-sm shadow-md cursor-pointer">
+                    KIRIM LAPORAN PEMBAYARAN
                 </button>
             </form>
         </div>
 
-        <div id="wrapperStruk" class="hidden space-y-4">
-            <div id="notaVisual" class="bg-white p-6 rounded-lg shadow-sm border border-dashed border-gray-400 font-mono text-xs text-black max-w-[320px] mx-auto bg-amber-50/20">
-                <div class="text-center space-y-1 border-b border-dashed border-gray-400 pb-3 mb-3">
-                    <h3 class="text-sm font-bold tracking-wider">STRUK PEMBAYARAN</h3>
-                    <p class="text-[10px] text-gray-500">Sistem POS Internal Sheets</p>
-                </div>
-                <div class="space-y-2">
-                    <div class="flex justify-between"><span>ID TRANS:</span><span id="stId" class="font-bold"></span></div>
-                    <div class="flex justify-between"><span>TENANT:</span><span id="stTenant"></span></div>
-                    <div class="flex justify-between"><span>METODE:</span><span id="stMetode"></span></div>
-                    <div class="flex justify-between"><span>TANGGAL:</span><span id="stTanggal"></span></div>
-                    <div class="border-t border-dashed border-gray-400 pt-2 flex justify-between text-sm font-bold">
-                        <span>TOTAL:</span>
-                        <span id="stTotal"></span>
-                    </div>
-                </div>
-                <div class="text-center mt-4 border-t border-dashed border-gray-400 pt-3 text-[10px] text-gray-500">
-                    * TERIMA KASIH *<br>Data Telah Masuk Database Cloud
-                </div>
+        <div id="wrapperStatus" class="hidden bg-white p-5 rounded-xl shadow-sm border border-gray-200 text-center space-y-3">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-amber-100 text-amber-600 mb-1 animate-pulse">
+                ⏳
             </div>
-
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex flex-col gap-2">
-                <button id="btnDownload" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center gap-2 cursor-pointer shadow">
-                    💾 Unduh Gambar Nota (.PNG)
-                </button>
-                <a id="btnWA" target="_blank" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center gap-2 text-center shadow cursor-pointer">
-                    💬 Kirim WhatsApp (Deep Link)
-                </a>
+            <h3 class="text-md font-bold text-gray-800">Laporan Berhasil Terkirim!</h3>
+            <p class="text-xs text-gray-500">ID Laporan: <span id="txtId" class="font-mono font-bold text-gray-700"></span></p>
+            
+            <div class="p-3 bg-amber-50 text-amber-800 rounded-lg border border-amber-200 text-xs font-medium">
+                ⚠️ Status: Menunggu Verifikasi Owner
             </div>
+            
+            <p class="text-[11px] text-gray-400 font-mono">
+                Data & file bukti transfer Anda telah disimpan di cloud storage sistem internal kos secara real-time. Pemilik kos akan segera memeriksa laporan ini.
+            </p>
         </div>
 
     </div>
 
     <script>
-        // Konfigurasi URL API GAS Anda yang sudah terdeploy aktif
         const API_URL = "https://script.google.com/macros/s/AKfycbwfiusFi26FQieEOa-oWHsO6OLwa2fdEgmeQoXuTuoqsSaydyXR1yoj7l1yNW_Dc5Sd/exec";
 
-        // Set otomatis tanggal hari ini di input form
-        document.getElementById('tanggal').valueToDate = new Date();
+        // Set default tanggal hari ini
         document.getElementById('tanggal').value = new Date().toISOString().substring(0, 10);
 
         const form = document.getElementById('paymentForm');
         const btnSubmit = document.getElementById('btnSubmit');
-        const wrapperStruk = document.getElementById('wrapperStruk');
+        const wrapperStatus = document.getElementById('wrapperStatus');
+
+        // Fungsi pembantu mengubah file ke teks Base64 biner
+        const convertToBase64 = (file) => {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    const base64String = reader.result.split(',')[1];
+                    resolve(base64String);
+                };
+                reader.onerror = (error) => reject(error);
+            });
+        };
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Lock tombol saat loading proses kirim data
             btnSubmit.disabled = true;
-            btnSubmit.innerText = "MENYIMPAN DATA...";
+            btnSubmit.innerText = "MENGUPLOAD DATA & BUKTI...";
 
-            // Ambil data dari form input
+            const fileInput = document.getElementById('fileBukti').files[0];
+            let fileBase64 = "";
+            let fileName = "";
+            let fileType = "";
+
+            if (fileInput) {
+                fileBase64 = await convertToBase64(fileInput);
+                fileName = `BUKTI_${Date.now()}_${fileInput.name.replace(/\s+/g, '_')}`;
+                fileType = fileInput.type;
+            }
+
             const payload = {
-                nama_tenant: document.getElementById('namaTenant').value,
+                nomor_kamar: document.getElementById('nomorKamar').value,
+                nama_penyewa: document.getElementById('namaPenyewa').value,
                 jumlah_bayar: parseInt(document.getElementById('jumlahBayar').value),
-                metode: document.getElementById('metode').value,
-                tanggal: document.getElementById('tanggal').value
+                tanggal: document.getElementById('tanggal').value,
+                file_base64: fileBase64,
+                file_name: fileName,
+                file_type: fileType
             };
 
             try {
-                // Kirim data ke Google Sheets via GAS Web App API
-                const response = await fetch(API_URL, {
+                // Kirim muatan data ke GAS Web App
+                await fetch(API_URL, {
                     method: 'POST',
-                    mode: 'no-cors', // Mode no-cors wajib untuk memotong CORS Apps Script standar
+                    mode: 'no-cors', 
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
 
-                // Generate Dummy ID lokal untuk visual karena mode no-cors tidak mengembalikan JSON response
-                const txId = "TXID-" + Date.now();
+                // Generate ID lokal untuk visual penunjuk penyewa
+                const mockId = "KOS-" + Date.now();
+                document.getElementById('txtId').innerText = mockId;
 
-                // Inject data ke komponen visual struk nota
-                document.getElementById('stId').innerText = txId;
-                document.getElementById('stTenant').innerText = payload.nama_tenant;
-                document.getElementById('stMetode').innerText = payload.metode;
-                document.getElementById('stTanggal').innerText = payload.tanggal;
-                document.getElementById('stTotal').innerText = "Rp " + payload.jumlah_bayar.toLocaleString('id-ID');
-
-                // Tampilkan container struk & tombol aksi
-                wrapperStruk.classList.remove('hidden');
+                // Tampilkan banner status verifikasi, sembunyikan form input
+                form.reset();
+                form.parentElement.classList.add('hidden');
+                wrapperStatus.classList.remove('hidden');
                 
-                // Format Teks pesan untuk Deep Link WhatsApp
-                const teksWA = `*VERIFIKASI PEMBAYARAN POS*\n----------------------------------------\n*ID Transaksi:* ${txId}\n*Tenant:* ${payload.nama_tenant}\n*Metode:* ${payload.metode}\n*Tanggal:* ${payload.tanggal}\n*Total:* Rp ${payload.jumlah_bayar.toLocaleString('id-ID')}\n----------------------------------------\n_Data sukses direkam secara real-time di sistem cloud spreadsheet._\n\n*(Silakan tempel/paste gambar nota yang sudah diunduh)*`;
-                
-                // Set Link tombol WhatsApp dengan format URI encode
-                document.getElementById('btnWA').href = `https://api.whatsapp.com/send?text=${encodeURIComponent(teksWA)}`;
-                
-                // Scroll otomatis fokus ke area struk setelah diproses
-                wrapperStruk.scrollIntoView({ behavior: 'smooth' });
-                alert("Data berhasil dikirim ke Sheets!");
+                alert("Laporan pembayaran sukses dikirim!");
 
             } catch (error) {
                 console.error(error);
-                alert("Terjadi kesalahan sistem, periksa koneksi internet.");
+                alert("Koneksi gagal atau terputus. Silakan coba kembali.");
             } finally {
-                // Reset status tombol submit
                 btnSubmit.disabled = false;
-                btnSubmit.innerText = "SIMPAN & PROSES NOTA";
+                btnSubmit.innerText = "KIRIM LAPORAN PEMBAYARAN";
             }
-        });
-
-        // Logika Capture HTML Struk menjadi Gambar PNG secara lokal di browser HP
-        document.getElementById('btnDownload').addEventListener('click', () => {
-            const targetElement = document.getElementById('notaVisual');
-            
-            html2canvas(targetElement, {
-                scale: 3, // Meningkatkan resolusi agar teks nota tajam/tidak pecah di layar HP
-                logging: false,
-                useCORS: true
-            }).then(canvas => {
-                const imageBase64 = canvas.toDataURL("image/png");
-                
-                // Trigger download file gambar lokal langsung di Chrome HP
-                const link = document.createElement('a');
-                link.download = `Nota-${document.getElementById('stId').innerText}.png`;
-                link.href = imageBase64;
-                link.click();
-            });
         });
     </script>
 </body>
