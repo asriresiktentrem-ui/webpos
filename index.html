@@ -7,6 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
+        /* Desain struk dikunci total, hanya warna oklch yang diredam ke format Hex standar */
         #notaVisual {
             background-color: #ffffff !important;
             padding: 24px !important;
@@ -36,6 +37,11 @@
         .nota-flex { display: flex !important; justify-content: space-between !important; margin-bottom: 4px !important; color: #1f2937 !important; }
         .nota-total { border-top: 1px dashed #9ca3af !important; padding-top: 4px !important; font-weight: bold !important; color: #4f46e5 !important; font-size: 13px !important; }
         .nota-footer { font-size: 11px !important; color: #6b7280 !important; line-height: 1.4 !important; border-top: 1px dashed #9ca3af !important; padding-top: 8px !important; }
+        
+        /* Bypass rule pembersihan oklch agar html2canvas tidak crash */
+        #notaVisual * {
+            color: inherit;
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen p-4 font-sans text-gray-800">
@@ -45,7 +51,7 @@
         <div id="headerArea" class="bg-indigo-600 text-white p-4 rounded-xl shadow-md text-center">
             <h1 class="text-xl font-bold">Sistem Pembayaran Kos</h1>
             <p class="text-xs opacity-80">Formulir Laporan Penyewa Kamar</p>
-            <p class="text-[10px] font-mono mt-1 opacity-60">V 1.4</p>
+            <p class="text-[10px] font-mono mt-1 opacity-60">V 1.5</p>
         </div>
 
         <div id="formArea" class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
@@ -81,16 +87,16 @@
         <div id="wrapperStatus" class="hidden space-y-4">
             <div id="notaVisual">
                 <div class="nota-icon">⏳</div>
-                <div class="nota-title">Laporan Terkirim!</div>
-                <div class="nota-id">ID: <span id="stId"></span></div>
+                <div style="color: #1e293b !important;" class="nota-title">Laporan Terkirim!</div>
+                <div style="color: #6b7280 !important;" class="nota-id">ID: <span id="stId"></span></div>
                 <div class="nota-status">⚠️ Status: Menunggu Verifikasi Owner</div>
                 <div class="nota-details">
                     <div class="nota-flex"><span>KAMAR   :</span><span id="stKamar"></span></div>
                     <div class="nota-flex"><span>PENYEWA :</span><span id="stPenyewa"></span></div>
                     <div class="nota-flex"><span>TANGGAL :</span><span id="stTanggal"></span></div>
-                    <div class="nota-flex nota-total"><span>TOTAL   :</span><span id="stTotal"></span></div>
+                    <div class="nota-flex nota-total"><span style="color: #4f46e5 !important;">TOTAL   :</span><span style="color: #4f46e5 !important;" id="stTotal"></span></div>
                 </div>
-                <div class="nota-footer">
+                <div style="color: #6b7280 !important;" class="nota-footer">
                     Data & file bukti transfer Anda telah disimpan di cloud storage sistem internal kos. Pemilik kos akan segera memeriksa laporan ini.
                 </div>
             </div>
@@ -205,12 +211,11 @@
             var targetElement = document.getElementById('notaVisual');
             var currentId = document.getElementById('stId').innerText;
             
-            // Konfigurasi perbaikan compability engine html2canvas untuk Tailwind CSS v4
             html2canvas(targetElement, {
                 scale: 3,
                 backgroundColor: "#ffffff",
                 useCORS: true,
-                allowTaint: true,
+                allowTaint: false,
                 logging: false,
                 height: targetElement.offsetHeight,
                 width: targetElement.offsetWidth
