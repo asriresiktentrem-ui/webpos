@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Registrasi Calon Penyewa Kos</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-4 font-sans text-gray-800">
+
+    <div class="max-w-md mx-auto space-y-6">
+        
+        <div id="headerArea" class="bg-blue-600 text-white p-4 rounded-xl shadow-md text-center">
+            <h1 class="text-xl font-bold">Formulir Registrasi Hunian</h1>
+            <p class="text-xs opacity-80">Sistem Pendataan Calon Penyewa Kos</p>
+        </div>
+
+        <div id="formArea" class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+            <form id="registrationForm" class="space-y-5">
+                
+                <div class="space-y-3">
+                    <h3 class="text-sm font-bold text-blue-600 border-b pb-1">DATA CALON PENYEWA</h3>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">NAMA LENGKAP</label>
+                        <input type="text" id="nama" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">PILIH NOMOR KAMAR</label>
+                        <select id="noKamar" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm bg-white">
+                            <option value="">⏳ Memuat daftar kamar...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">ALAMAT ASAL (Sesuai KTP)</label>
+                        <textarea id="alamat" required rows="2" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">NOMOR WHATSAPP</label>
+                        <input type="tel" id="noWa" required placeholder="Contoh: 08123456789" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                    </div>
+                </div>
+
+                <div class="space-y-3 pt-2">
+                    <h3 class="text-sm font-bold text-blue-600 border-b pb-1">IDENTITAS PENANGGUNG JAWAB</h3>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">NAMA PENANGGUNG JAWAB</label>
+                        <input type="text" id="pjNama" required placeholder="Nama Orang Tua / Wali / Saudara" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">STATUS / HUBUNGAN</label>
+                        <input type="text" id="pjStatus" required placeholder="Contoh: Ayah, Ibu, Kakak" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">ALAMAT PENANGGUNG JAWAB</label>
+                        <textarea id="pjAlamat" required rows="2" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">NOMOR WA PENANGGUNG JAWAB</label>
+                        <input type="tel" id="pjWa" required placeholder="Contoh: 08123456789" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                    </div>
+                </div>
+
+                <div class="space-y-1 pt-2">
+                    <h3 class="text-sm font-bold text-blue-600 border-b pb-1">BERKAS IDENTITAS</h3>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">UPLOAD FOTO IDENTITAS (KTP/SIM)</label>
+                    <input type="file" id="fotoId" required accept="image/*" class="w-full p-2 border rounded-lg text-sm bg-gray-50 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                </div>
+
+                <button type="submit" id="btnSubmit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition text-sm shadow-md cursor-pointer tracking-wide">
+                    AJUKAN REGISTRASI HUNIAN
+                </button>
+            </form>
+        </div>
+
+        <div id="wrapperSuccess" class="hidden bg-white p-6 rounded-xl shadow-md border border-gray-200 text-center space-y-4">
+            <div class="text-5xl">📝</div>
+            <h2 class="text-xl font-bold text-gray-800">Registrasi Berhasil Dikirim!</h2>
+            <div class="w-16 h-1 bg-blue-600 mx-auto rounded-full"></div>
+            <p class="text-sm text-gray-600 leading-relaxed px-2">
+                Data registrasi dan berkas foto identitas Anda telah masuk ke dalam sistem antrean admin kos. 
+            </p>
+            <div class="bg-amber-50 border border-amber-200 text-amber-900 p-3 rounded-lg text-xs font-semibold">
+                ⏳ Status saat ini: Data sedang dalam proses verifikasi owner.
+            </div>
+            <p class="text-xs text-gray-500 italic">
+                Konfirmasi hasil verifikasi penempatan kamar akan segera kami informasikan kembali secara resmi melalui WhatsApp ke nomor telepon tertera Anda. Terima kasih.
+            </p>
+        </div>
+
+    </div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbx-Gc8YmYkyHA_5h7ueZgG_6pj4Sc8iHczQQxq-StiqCgJVCLzSs4jXjPNSA7xcjNv0/exec";
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            const selectKamar = document.getElementById('noKamar');
+            try {
+                const response = await fetch(API_URL);
+                const result = await response.json();
+                if (result.status === "success") {
+                    selectKamar.innerHTML = '<option value="">-- Pilih Nomor Kamar --</option>';
+                    result.data.forEach(kamar => {
+                        const opt = document.createElement('option');
+                        opt.value = kamar;
+                        opt.innerText = "Kamar " + kamar;
+                        selectKamar.appendChild(opt);
+                    });
+                } else {
+                    selectKamar.innerHTML = '<option value="">Gagal memuat daftar kamar</option>';
+                }
+            } catch (err) {
+                console.error(err);
+                selectKamar.innerHTML = '<option value="">Gagal terhubung ke server master</option>';
+            }
+        });
+
+        const convertToBase64 = (file) => {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = (error) => reject(error);
+            });
+        };
+
+        const form = document.getElementById('registrationForm');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const wrapperSuccess = document.getElementById('wrapperSuccess');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            btnSubmit.disabled = true;
+            btnSubmit.innerText = "MEMPROSES & MENGUNGGAH BERKAS...";
+
+            const fileInput = document.getElementById('fotoId').files[0];
+            let fileBase64 = "";
+            let fileName = "";
+            let fileType = "";
+
+            if (fileInput) {
+                try {
+                    fileBase64 = await convertToBase64(fileInput);
+                    fileName = `ID_${Date.now()}_${fileInput.name.replace(/\s+/g, '_')}`;
+                    fileType = fileInput.type;
+                } catch (err) { console.error(err); }
+            }
+
+            const payload = {
+                nama: document.getElementById('nama').value,
+                no_kamar: document.getElementById('noKamar').value,
+                alamat: document.getElementById('alamat').value,
+                no_wa: document.getElementById('noWa').value,
+                pj_nama: document.getElementById('pjNama').value,
+                pj_status: document.getElementById('pjStatus').value,
+                pj_alamat: document.getElementById('pjAlamat').value,
+                pj_wa: document.getElementById('pjWa').value,
+                file_base64: fileBase64,
+                file_name: fileName,
+                file_type: fileType
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                
+                if (result.status === "success") {
+                    document.getElementById('headerArea').style.display = 'none';
+                    document.getElementById('formArea').style.display = 'none';
+                    wrapperSuccess.classList.remove('hidden');
+                    form.reset();
+                } else {
+                    alert("Gagal memproses pendaftaran:\n" + result.message);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Koneksi gagal: " + error.message);
+            } finally {
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = "AJUKAN REGISTRASI HUNIAN";
+            }
+        });
+    </script>
+</body>
+</html>

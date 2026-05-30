@@ -7,18 +7,16 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
     <style>
-        /* CSS Nota Visual yang Anda Suka - Tidak Mengubah Bentuk/Warna */
         #notaVisual {
             background-color: #ffffff !important;
             padding: 24px !important;
             border-radius: 12px !important;
             border: 1px solid #e5e7eb !important;
             text-align: center !important;
-            width: 320px !important; /* Gunakan Fixed Width Sempurna */
+            width: 320px !important;
             font-family: Arial, sans-serif !important;
             color: #1f2937 !important;
             box-sizing: border-box !important;
-            /* Buang margin auto di sini agar dikontrol wadah khusus */
             margin: 0 !important; 
         }
         .nota-icon { font-size: 32px !important; margin-bottom: 8px !important; }
@@ -40,13 +38,12 @@
         .nota-total { border-top: 1px dashed #9ca3af !important; padding-top: 6px !important; font-weight: bold !important; color: #4f46e5 !important; font-size: 14px !important; }
         .nota-footer { font-size: 11px !important; color: #6b7280 !important; line-height: 1.4 !important; border-top: 1px dashed #9ca3af !important; padding-top: 8px !important; text-align: center !important; }
 
-        /* WADAH KHUSUS PENCENTERAN TOTAL SAAT PENYIMPANAN GAMBAR */
         #notaCaptureWrapper {
             display: flex !important;
             justify-content: center !important;
             align-items: center !important;
             background-color: #ffffff !important;
-            padding: 20px !important; /* Beri sedikit padding tambahan pada canvas */
+            padding: 20px !important;
             width: auto !important;
             height: auto !important;
         }
@@ -59,7 +56,7 @@
         <div id="headerArea" class="bg-indigo-600 text-white p-4 rounded-xl shadow-md text-center">
             <h1 class="text-xl font-bold">Sistem Pembayaran Kos</h1>
             <p class="text-xs opacity-80">Formulir Laporan Penyewa Kamar</p>
-            <p class="text-[10px] font-mono mt-1 opacity-60">V 1.9</p>
+            <p class="text-[10px] font-mono mt-1 opacity-60">V 2.0</p>
         </div>
 
         <div id="formArea" class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
@@ -120,7 +117,7 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbyt58Z6OfLNc4oRKF_O4GLGPFxxer-hBA2Fr4P6AiHuyp4LnXx7dCHsOqaANqZHYcio/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbx-Gc8YmYkyHA_5h7ueZgG_6pj4Sc8iHczQQxq-StiqCgJVCLzSs4jXjPNSA7xcjNv0/exec";
 
         document.getElementById('tanggal').value = new Date().toISOString().substring(0, 10);
 
@@ -212,18 +209,15 @@
             }
         });
 
-        // LOGIKA BARU MENGGUNAKAN Wadah FLEXBOX KHUSUS
         document.getElementById('btnDownloadNota').addEventListener('click', function() {
             var btn = this;
             var originalText = btn.innerHTML;
             btn.innerHTML = "⏳ Memproses...";
             btn.disabled = true;
 
-            // KITA MENEMBAK WADAH KHUSUS AGAR AMBIL GAMBAR DENGAN KONTEKS FLEXBOX CENTER
             var targetWrapper = document.getElementById('notaCaptureWrapper');
             var currentId = document.getElementById('stId').innerText;
             
-            // html-to-image secara otomatis merender wrapper yang sudah center, sehingga .png pasti center
             htmlToImage.toPng(targetWrapper, { 
                 backgroundColor: '#ffffff',
                 pixelRatio: 3 
@@ -249,3 +243,4 @@
     </script>
 </body>
 </html>
+
