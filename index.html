@@ -45,7 +45,7 @@
         <div id="headerArea" class="bg-indigo-600 text-white p-4 rounded-xl shadow-md text-center">
             <h1 class="text-xl font-bold">Sistem Pembayaran Kos</h1>
             <p class="text-xs opacity-80">Formulir Laporan Penyewa Kamar</p>
-            <p class="text-[10px] font-mono mt-1 opacity-60">V 1.3 (Error Debug Mode)</p>
+            <p class="text-[10px] font-mono mt-1 opacity-60">V 1.4</p>
         </div>
 
         <div id="formArea" class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
@@ -169,7 +169,6 @@
             document.getElementById('stTanggal').innerText = payload.tanggal;
 
             try {
-                // DI SINI KITA BUANG 'no-cors' AGAR BISA MENANGKAP RESPONS ERROR ASLI DARI GOOGLE
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -185,14 +184,12 @@
                     form.reset();
                     alert("Laporan pembayaran sukses dikirim dan disimpan!");
                 } else {
-                    // Menangkap error logic dari try-catch dalam GAS
                     alert("Gagal dari Server GAS:\n" + result.message);
                 }
 
             } catch (error) {
-                // Menangkap error jaringan / CORS / Keamanan Google pembatasan akses
                 console.error(error);
-                alert("DEBUG ERROR SYSTEM:\n" + error.message + "\n\nKemungkinan besar Web App Anda belum diizinkan akses / Otorisasi Akun Google.");
+                alert("DEBUG ERROR SYSTEM:\n" + error.message);
             } finally {
                 btnSubmit.disabled = false;
                 btnSubmit.innerText = "KIRIM LAPORAN PEMBAYARAN";
@@ -208,13 +205,15 @@
             var targetElement = document.getElementById('notaVisual');
             var currentId = document.getElementById('stId').innerText;
             
+            // Konfigurasi perbaikan compability engine html2canvas untuk Tailwind CSS v4
             html2canvas(targetElement, {
-                scale: 2,
+                scale: 3,
                 backgroundColor: "#ffffff",
                 useCORS: true,
-                allowTaint: false,
-                foreignObjectRendering: false,
-                removeContainer: true
+                allowTaint: true,
+                logging: false,
+                height: targetElement.offsetHeight,
+                width: targetElement.offsetWidth
             }).then(canvas => {
                 var imageBase64 = canvas.toDataURL("image/png");
                 var link = document.createElement('a');
@@ -226,7 +225,7 @@
                 btn.innerHTML = "✅ Gambar Berhasil Disimpan";
             }).catch(err => {
                 console.error(err);
-                alert("Gagal memproses file gambar kuitansi.");
+                alert("Gagal memproses gambar kuitansi: " + err.message);
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             });
