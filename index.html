@@ -5,30 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Bukti Pembayaran Kos</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        #notaVisual {
+            background-color: #ffffff;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #e5e7eb;
+            text-align: center;
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto;
+            font-family: sans-serif;
+            color: #1f2937;
+        }
+        .nota-icon { font-size: 32px; margin-bottom: 8px; }
+        .nota-title { font-size: 20px; font-weight: bold; margin-bottom: 4px; color: #1e293b; }
+        .nota-id { font-size: 12px; color: #6b7280; font-family: monospace; margin-bottom: 16px; }
+        .nota-status {
+            background-color: #fef3c7;
+            color: #92400e;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            border: 1px solid #fde68a;
+            margin-bottom: 16px;
+        }
+        .nota-details { text-align: left; font-family: monospace; font-size: 12px; margin-bottom: 16px; border-top: 1px dashed #9ca3af; padding-top: 8px; }
+        .nota-flex { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .nota-total { border-top: 1px dashed #9ca3af; padding-top: 4px; font-weight: bold; color: #4f46e5; font-size: 13px; }
+        .nota-footer { font-size: 11px; color: #6b7280; line-height: 1.4; border-top: 1px dashed #9ca3af; padding-top: 8px; }
+    </style>
 </head>
 <body class="bg-gray-100 min-h-screen p-4 font-sans text-gray-800">
 
     <div class="max-w-md mx-auto space-y-6">
         
-        <div class="bg-indigo-600 text-white p-4 rounded-xl shadow-md text-center">
+        <div id="headerArea" class="bg-indigo-600 text-white p-4 rounded-xl shadow-md text-center">
             <h1 class="text-xl font-bold">Sistem Pembayaran Kos</h1>
             <p class="text-xs opacity-80">Formulir Laporan Penyewa Kamar</p>
         </div>
 
-        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+        <div id="formArea" class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
             <h2 class="text-lg font-bold mb-4 border-b pb-2 text-gray-700">Lapor Pembayaran</h2>
             <form id="paymentForm" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1">NOMOR KAMAR</label>
-                    <input type="text" id="nomorKamar" required placeholder="Contoh: Kamar 05" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                    <input type="text" id="nomorKamar" required placeholder="Contoh: A1" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1">NAMA PENYEWA</label>
-                    <input type="text" id="namaPenyewa" required placeholder="Contoh: Yusup Amroni" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                    <input type="text" id="namaPenyewa" required placeholder="" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">JUMLAH BAYAR (Rp)</label>
-                    <input type="number" id="jumlahBayar" required placeholder="Contoh: 1500000" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">JUMLAH BAYAR</label>
+                    <input type="text" id="jumlahBayarMask" required placeholder="Rp 0" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-semibold">
+                    <input type="hidden" id="jumlahBayar" name="jumlahBayar">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1">TANGGAL TRANSFER</label>
@@ -44,43 +78,63 @@
             </form>
         </div>
 
-        <div id="wrapperStatus" class="hidden bg-white p-5 rounded-xl shadow-sm border border-gray-200 text-center space-y-3">
-            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-amber-100 text-amber-600 mb-1 animate-pulse">
-                ⏳
-            </div>
-            <h3 class="text-md font-bold text-gray-800">Laporan Berhasil Terkirim!</h3>
-            <p class="text-xs text-gray-500">ID Laporan: <span id="txtId" class="font-mono font-bold text-gray-700"></span></p>
+        <div id="wrapperStatus" class="hidden space-y-4">
             
-            <div class="p-3 bg-amber-50 text-amber-800 rounded-lg border border-amber-200 text-xs font-medium">
-                ⚠️ Status: Menunggu Verifikasi Owner
+            <div id="notaVisual">
+                <div class="nota-icon">⏳</div>
+                <div class="nota-title">Laporan Terkirim!</div>
+                <div class="nota-id">ID: <span id="stId"></span></div>
+                
+                <div class="nota-status">
+                    ⚠️ Status: Menunggu Verifikasi Owner
+                </div>
+
+                <div class="nota-details">
+                    <div class="nota-flex"><span>KAMAR   :</span><span id="stKamar"></span></div>
+                    <div class="nota-flex"><span>PENYEWA :</span><span id="stPenyewa"></span></div>
+                    <div class="nota-flex"><span>TANGGAL :</span><span id="stTanggal"></span></div>
+                    <div class="nota-flex nota-total"><span>TOTAL   :</span><span id="stTotal"></span></div>
+                </div>
+                
+                <div class="nota-footer">
+                    Data & file bukti transfer Anda telah disimpan di cloud storage sistem internal kos. Pemilik kos akan segera memeriksa laporan ini.
+                </div>
             </div>
-            
-            <p class="text-[11px] text-gray-400 font-mono">
-                Data & file bukti transfer Anda telah disimpan di cloud storage sistem internal kos secara real-time. Pemilik kos akan segera memeriksa laporan ini.
-            </p>
+
+            <div class="max-w-[320px] mx-auto">
+                <button id="btnDownloadNota" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md transition">
+                    💾 Simpan Gambar Struk Laporan (.PNG)
+                </button>
+            </div>
         </div>
 
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbwfiusFi26FQieEOa-oWHsO6OLwa2fdEgmeQoXuTuoqsSaydyXR1yoj7l1yNW_Dc5Sd/exec";
+        // URL WEB APP YANG BARU SUDAH DITANAM DI SINI
+        const API_URL = "https://script.google.com/macros/s/AKfycbwzLi4aDcV9luMShYuUhTTPCQARE86XgqTP5uEX7U0YL-_p5esqTpicwYZzc83ZwtnO/exec";
 
-        // Set default tanggal hari ini
         document.getElementById('tanggal').value = new Date().toISOString().substring(0, 10);
 
         const form = document.getElementById('paymentForm');
         const btnSubmit = document.getElementById('btnSubmit');
         const wrapperStatus = document.getElementById('wrapperStatus');
+        const maskInput = document.getElementById('jumlahBayarMask');
+        const realInput = document.getElementById('jumlahBayar');
 
-        // Fungsi pembantu mengubah file ke teks Base64 biner
+        maskInput.addEventListener('input', function(e) {
+            let value = this.value.replace(/[^0-9]/g, '');
+            if (value.startsWith('0')) { value = value.replace(/^0+/, ''); }
+            if (value === "") { this.value = ""; realInput.value = 0; return; }
+            realInput.value = parseInt(value);
+            this.value = "Rp " + parseInt(value).toLocaleString('id-ID');
+        });
+
         const convertToBase64 = (file) => {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
-                reader.onload = () => {
-                    const base64String = reader.result.split(',')[1];
-                    resolve(base64String);
-                };
+                reader.onload = () => resolve(reader.result.split(',')[1]);
                 reader.onerror = (error) => reject(error);
             });
         };
@@ -88,6 +142,11 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            if (!realInput.value || realInput.value == 0) {
+                alert("Masukkan jumlah bayar yang valid!");
+                return;
+            }
+
             btnSubmit.disabled = true;
             btnSubmit.innerText = "MENGUPLOAD DATA & BUKTI...";
 
@@ -97,48 +156,87 @@
             let fileType = "";
 
             if (fileInput) {
-                fileBase64 = await convertToBase64(fileInput);
-                fileName = `BUKTI_${Date.now()}_${fileInput.name.replace(/\s+/g, '_')}`;
-                fileType = fileInput.type;
+                try {
+                    fileBase64 = await convertToBase64(fileInput);
+                    fileName = `BUKTI_${Date.now()}_${fileInput.name.replace(/\s+/g, '_')}`;
+                    fileType = fileInput.type;
+                } catch (err) {
+                    console.error("Gagal membaca file", err);
+                }
             }
 
             const payload = {
                 nomor_kamar: document.getElementById('nomorKamar').value,
                 nama_penyewa: document.getElementById('namaPenyewa').value,
-                jumlah_bayar: parseInt(document.getElementById('jumlahBayar').value),
+                jumlah_bayar: parseInt(realInput.value),
                 tanggal: document.getElementById('tanggal').value,
                 file_base64: fileBase64,
                 file_name: fileName,
                 file_type: fileType
             };
 
+            const mockId = "KOS-" + Date.now();
+            
+            // Injeksi data mentah ke dalam komponen struk kuitansi visual sebelum fetch
+            document.getElementById('stId').innerText = mockId;
+            document.getElementById('stKamar').innerText = payload.nomor_kamar;
+            document.getElementById('stPenyewa').innerText = payload.nama_penyewa;
+            document.getElementById('stTotal').innerText = maskInput.value;
+            document.getElementById('stTanggal').innerText = payload.tanggal;
+
+            document.getElementById('headerArea').style.display = 'none';
+            document.getElementById('formArea').style.display = 'none';
+            wrapperStatus.classList.remove('hidden');
+
             try {
-                // Kirim muatan data ke GAS Web App
                 await fetch(API_URL, {
                     method: 'POST',
                     mode: 'no-cors', 
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-
-                // Generate ID lokal untuk visual penunjuk penyewa
-                const mockId = "KOS-" + Date.now();
-                document.getElementById('txtId').innerText = mockId;
-
-                // Tampilkan banner status verifikasi, sembunyikan form input
-                form.reset();
-                form.parentElement.classList.add('hidden');
-                wrapperStatus.classList.remove('hidden');
                 
+                form.reset();
                 alert("Laporan pembayaran sukses dikirim!");
 
             } catch (error) {
                 console.error(error);
-                alert("Koneksi gagal atau terputus. Silakan coba kembali.");
-            } finally {
+                alert("Koneksi bermasalah.");
+            } else {
                 btnSubmit.disabled = false;
                 btnSubmit.innerText = "KIRIM LAPORAN PEMBAYARAN";
             }
+        });
+
+        document.getElementById('btnDownloadNota').addEventListener('click', function() {
+            var btn = this;
+            btn.innerHTML = "⏳ Memproses...";
+            btn.disabled = true;
+
+            var targetElement = document.getElementById('notaVisual');
+            var currentId = document.getElementById('stId').innerText;
+            
+            html2canvas(targetElement, {
+                scale: 3, 
+                backgroundColor: "#ffffff",
+                logging: false,
+                useCORS: true
+            }).then(canvas => {
+                var imageBase64 = canvas.toDataURL("image/png");
+                
+                var link = document.createElement('a');
+                link.download = `Struk_Laporan_${currentId}.png`;
+                link.href = imageBase64;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                btn.innerHTML = "✅ Gambar Berhasil Disimpan";
+            }).catch(err => {
+                alert("Gagal menyimpan kuitansi.");
+                btn.innerHTML = "💾 Simpan Gambar Struk Laporan (.PNG)";
+                btn.disabled = false;
+            });
         });
     </script>
 </body>
