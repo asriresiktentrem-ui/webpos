@@ -12,8 +12,8 @@
         
         <div id="headerArea" class="bg-blue-600 text-white p-4 rounded-xl shadow-md text-center">
             <h1 class="text-xl font-bold">Griya Ananda</h1>
-            <p class="text-xs opacity-90">Formulir Registrasi Hunian Kos</p>
-            <p class="text-[10px] font-mono mt-1 opacity-60">V 1.0</p>
+            <p class="text-xs opacity-80">Formulir Registrasi Hunian Kos</p>
+            <p class="text-[10px] font-mono mt-1 opacity-60">V 1.1</p>
         </div>
 
         <div id="formArea" class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
@@ -91,9 +91,8 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbx-Gc8YmYkyHA_5h7ueZgG_6pj4Sc8iHczQQxq-StiqCgJVCLzSs4jXjPNSA7xcjNv0/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbxPRm0BsqAGIIyGYjYZKfS5zhDUHcEJY8CwCcHQcRZraZvRT-dazaZTk_u8bhIPVnOk/exec";
 
-        // Ambil data kamar otomatis saat halaman dibuka dengan query parameter eksplisit
         window.addEventListener('DOMContentLoaded', async () => {
             const selectKamar = document.getElementById('noKamar');
             try {
@@ -116,6 +115,7 @@
                 }
             } catch (err) {
                 console.error(err);
+                alert("DEBUG ERROR SERVER MASTER:\n" + err.message + "\n\nPastikan Deployment GAS sudah diubah ke 'Anyone'.");
                 selectKamar.innerHTML = '<option value="">Gagal terhubung ke server master</option>';
             }
         });
