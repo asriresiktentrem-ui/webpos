@@ -8,35 +8,34 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         #notaVisual {
-            background-color: #ffffff;
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            border: 1px solid #e5e7eb;
-            text-align: center;
-            width: 100%;
-            max-width: 320px;
-            margin: 0 auto;
-            font-family: sans-serif;
-            color: #1f2937;
+            background-color: #ffffff !important;
+            padding: 24px !important;
+            border-radius: 12px !important;
+            border: 1px solid #e5e7eb !important;
+            text-align: center !important;
+            width: 100% !important;
+            max-width: 320px !important;
+            margin: 0 auto !important;
+            font-family: sans-serif !important;
+            color: #1f2937 !important;
         }
-        .nota-icon { font-size: 32px; margin-bottom: 8px; }
-        .nota-title { font-size: 20px; font-weight: bold; margin-bottom: 4px; color: #1e293b; }
-        .nota-id { font-size: 12px; color: #6b7280; font-family: monospace; margin-bottom: 16px; }
+        .nota-icon { font-size: 32px !important; margin-bottom: 8px !important; }
+        .nota-title { font-size: 20px !important; font-weight: bold !important; margin-bottom: 4px !important; color: #1e293b !important; }
+        .nota-id { font-size: 11px !important; color: #6b7280 !important; font-family: monospace !important; margin-bottom: 16px !important; }
         .nota-status {
-            background-color: #fef3c7;
-            color: #92400e;
-            padding: 8px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: bold;
-            border: 1px solid #fde68a;
-            margin-bottom: 16px;
+            background-color: #fef3c7 !important;
+            color: #92400e !important;
+            padding: 8px !important;
+            border-radius: 8px !important;
+            font-size: 13px !important;
+            font-weight: bold !important;
+            border: 1px solid #fde68a !important;
+            margin-bottom: 16px !important;
         }
-        .nota-details { text-align: left; font-family: monospace; font-size: 12px; margin-bottom: 16px; border-top: 1px dashed #9ca3af; padding-top: 8px; }
-        .nota-flex { display: flex; justify-content: space-between; margin-bottom: 4px; }
-        .nota-total { border-top: 1px dashed #9ca3af; padding-top: 4px; font-weight: bold; color: #4f46e5; font-size: 13px; }
-        .nota-footer { font-size: 11px; color: #6b7280; line-height: 1.4; border-top: 1px dashed #9ca3af; padding-top: 8px; }
+        .nota-details { text-align: left !important; font-family: monospace !important; font-size: 12px !important; margin-bottom: 16px !important; border-top: 1px dashed #9ca3af !important; padding-top: 8px !important; }
+        .nota-flex { display: flex !important; justify-content: space-between !important; margin-bottom: 4px !important; color: #1f2937 !important; }
+        .nota-total { border-top: 1px dashed #9ca3af !important; padding-top: 4px !important; font-weight: bold !important; color: #4f46e5 !important; font-size: 13px !important; }
+        .nota-footer { font-size: 11px !important; color: #6b7280 !important; line-height: 1.4 !important; border-top: 1px dashed #9ca3af !important; padding-top: 8px !important; }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen p-4 font-sans text-gray-800">
@@ -57,7 +56,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1">NAMA PENYEWA</label>
-                    <input type="text" id="namaPenyewa" required placeholder="" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                    <input type="text" id="namaPenyewa" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1">JUMLAH BAYAR</label>
@@ -79,28 +78,21 @@
         </div>
 
         <div id="wrapperStatus" class="hidden space-y-4">
-            
             <div id="notaVisual">
                 <div class="nota-icon">⏳</div>
                 <div class="nota-title">Laporan Terkirim!</div>
                 <div class="nota-id">ID: <span id="stId"></span></div>
-                
-                <div class="nota-status">
-                    ⚠️ Status: Menunggu Verifikasi Owner
-                </div>
-
+                <div class="nota-status">⚠️ Status: Menunggu Verifikasi Owner</div>
                 <div class="nota-details">
                     <div class="nota-flex"><span>KAMAR   :</span><span id="stKamar"></span></div>
                     <div class="nota-flex"><span>PENYEWA :</span><span id="stPenyewa"></span></div>
                     <div class="nota-flex"><span>TANGGAL :</span><span id="stTanggal"></span></div>
                     <div class="nota-flex nota-total"><span>TOTAL   :</span><span id="stTotal"></span></div>
                 </div>
-                
                 <div class="nota-footer">
                     Data & file bukti transfer Anda telah disimpan di cloud storage sistem internal kos. Pemilik kos akan segera memeriksa laporan ini.
                 </div>
             </div>
-
             <div class="max-w-[320px] mx-auto">
                 <button id="btnDownloadNota" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md transition">
                     💾 Simpan Gambar Struk Laporan (.PNG)
@@ -111,7 +103,8 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbwzLi4aDcV9luMShYuUhTTPCQARE86XgqTP5uEX7U0YL-_p5esqTpicwYZzc83ZwtnO/exec";
+        // URL API DI BAWAH INI SUDAH MENGGUNAKAN ID DEPLOYMENT DEPLOY VERSION 5 TERBARU ANDA
+        const API_URL = "https://script.google.com/macros/s/AKfycbzrRYcZkLT2BREHo2ZE_FK5Y1ycFkaAiYYIiFfavuNsITy4-6YATc1VugkpDqBqrKPO/exec";
 
         document.getElementById('tanggal').value = new Date().toISOString().substring(0, 10);
 
@@ -140,11 +133,7 @@
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            if (!realInput.value || realInput.value == 0) {
-                alert("Masukkan jumlah bayar yang valid!");
-                return;
-            }
+            if (!realInput.value || realInput.value == 0) { alert("Masukkan jumlah bayar yang valid!"); return; }
 
             btnSubmit.disabled = true;
             btnSubmit.innerText = "MENGUPLOAD DATA & BUKTI...";
@@ -159,9 +148,7 @@
                     fileBase64 = await convertToBase64(fileInput);
                     fileName = `BUKTI_${Date.now()}_${fileInput.name.replace(/\s+/g, '_')}`;
                     fileType = fileInput.type;
-                } catch (err) {
-                    console.error("Gagal membaca file", err);
-                }
+                } catch (err) { console.error(err); }
             }
 
             const payload = {
@@ -175,7 +162,6 @@
             };
 
             const mockId = "KOS-" + Date.now();
-            
             document.getElementById('stId').innerText = mockId;
             document.getElementById('stKamar').innerText = payload.nomor_kamar;
             document.getElementById('stPenyewa').innerText = payload.nama_penyewa;
@@ -193,13 +179,11 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                
                 form.reset();
                 alert("Laporan pembayaran sukses dikirim!");
-
             } catch (error) {
                 console.error(error);
-                alert("Koneksi bermasalah.");
+                alert("Koneksi ke sistem cloud bermasalah.");
             } finally {
                 btnSubmit.disabled = false;
                 btnSubmit.innerText = "KIRIM LAPORAN PEMBAYARAN";
@@ -208,6 +192,7 @@
 
         document.getElementById('btnDownloadNota').addEventListener('click', function() {
             var btn = this;
+            var originalText = btn.innerHTML;
             btn.innerHTML = "⏳ Memproses...";
             btn.disabled = true;
 
@@ -215,24 +200,25 @@
             var currentId = document.getElementById('stId').innerText;
             
             html2canvas(targetElement, {
-                scale: 3, 
+                scale: 2,
                 backgroundColor: "#ffffff",
-                logging: false,
-                useCORS: true
+                useCORS: true,
+                allowTaint: false,
+                foreignObjectRendering: false,
+                removeContainer: true
             }).then(canvas => {
                 var imageBase64 = canvas.toDataURL("image/png");
-                
                 var link = document.createElement('a');
                 link.download = `Struk_Laporan_${currentId}.png`;
                 link.href = imageBase64;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-
                 btn.innerHTML = "✅ Gambar Berhasil Disimpan";
             }).catch(err => {
-                alert("Gagal menyimpan kuitansi.");
-                btn.innerHTML = "💾 Simpan Gambar Struk Laporan (.PNG)";
+                console.error(err);
+                alert("Gagal memproses file gambar kuitansi.");
+                btn.innerHTML = originalText;
                 btn.disabled = false;
             });
         });
