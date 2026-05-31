@@ -6,40 +6,36 @@
     <title>Panel Owner - Kuitansi Griya Ananda</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        @media print {
-            body { background: white; padding: 0; }
-            .no-print { display: none !important; }
-            .print-card { box-shadow: none !important; border: 1px solid #000 !important; margin: 0 !important; width: 100% !important; max-width: 100% !important; }
-        }
         #kuitansiCaptureArea {
             background-color: #ffffff !important;
-            padding: 20px !important;
+            padding: 24px !important;
             width: 100% !important;
-            max-width: 340px !important;
+            max-width: 360px !important;
             box-sizing: border-box !important;
         }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center font-sans text-gray-800 p-4">
     
-    <div id="kuitansiCaptureArea" class="bg-white p-6 rounded-xl shadow-md border border-gray-200 print-card space-y-5">
+    <div id="kuitansiCaptureArea" class="bg-white rounded-xl shadow-sm border border-gray-200 space-y-5">
         
-        <div id="loading" class="text-center py-8 space-y-3 no-print">
+        <div id="loading" class="text-center py-8 space-y-3">
             <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-indigo-600 border-t-transparent"></div>
             <p class="text-sm font-semibold text-gray-500">Memproses Data Kuitansi...</p>
         </div>
 
         <div id="successContent" class="hidden space-y-4">
-            <div class="text-center border-b pb-3 border-dashed border-gray-300">
-                <h2 class="text-xl font-black text-gray-800 tracking-wide">GRIYA ANANDA</h2>
-                <p class="text-xs text-gray-500 font-medium">Hunian Kos Eksklusif & Nyaman</p>
-                <div class="mt-2 inline-block bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                    ✓ Terverifikasi Lunas
+            <div class="text-center border-b pb-4 border-dashed border-gray-300">
+                <h2 class="text-xl font-black text-gray-800 tracking-wider">GRIYA ANANDA</h2>
+                <p class="text-[11px] text-gray-500 font-bold tracking-widest mt-1 uppercase">Asri, Resik, Tentrem</p>
+                <div class="mt-3 inline-block bg-emerald-100 text-emerald-800 text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
+                    ✓ TERVERIFIKASI LUNAS
                 </div>
             </div>
 
-            <div class="space-y-2.5 font-mono text-xs">
+            <div class="space-y-3 font-mono text-xs">
                 <div class="flex justify-between"><span class="text-gray-500">ID NOTA  :</span><span id="txId" class="font-bold text-gray-800"></span></div>
                 <div class="flex justify-between"><span class="text-gray-500">TANGGAL  :</span><span id="txTanggal" class="text-gray-800"></span></div>
                 <hr class="border-dashed border-gray-200 my-1">
@@ -47,61 +43,58 @@
                 <div class="flex justify-between"><span class="text-gray-500">NO KAMAR :</span><span id="txKamar" class="text-gray-800 font-bold"></span></div>
                 <div class="flex justify-between"><span class="text-gray-500">PERIODE  :</span><span id="txPeriode" class="text-gray-800"></span></div>
                 <hr class="border-dashed border-gray-300 my-2">
-                <div class="flex justify-between text-sm font-bold bg-gray-50 p-2 rounded border"><span class="text-indigo-700">TOTAL    :</span><span id="txTotal" class="text-indigo-700"></span></div>
+                <div class="flex justify-between text-sm font-bold bg-indigo-50 p-2.5 rounded border border-indigo-100"><span class="text-indigo-800">TOTAL BAYAR :</span><span id="txTotal" class="text-indigo-800"></span></div>
             </div>
 
-            <div class="text-center border-t pt-3 border-dashed border-gray-300 text-[10px] text-gray-400 leading-relaxed">
-                Tanda terima bukti pembayaran internal milik manajemen Griya Ananda.
+            <div class="text-center border-t pt-4 border-dashed border-gray-300 text-[9px] text-gray-400 leading-relaxed uppercase tracking-wide">
+                Tanda terima bukti pembayaran internal milik manajemen Griya Ananda. Dokumen ini sah secara elektronik.
             </div>
         </div>
 
-        <div id="error" class="hidden text-center py-6 space-y-3 no-print">
+        <div id="error" class="hidden text-center py-6 space-y-3">
             <div class="text-5xl">❌</div>
             <h2 class="text-lg font-bold text-red-600">Gagal Memproses</h2>
             <p id="errorMsg" class="text-xs text-gray-500">Jalur tidak valid.</p>
         </div>
     </div>
 
-    <div id="actionPanel" class="hidden mt-4 w-full max-w-sm bg-white p-4 rounded-xl border shadow-sm space-y-4 no-print">
-        <h3 class="text-xs font-bold text-gray-700 border-b pb-1.5 uppercase tracking-wider">⚙️ Panel Kontrol Verifikasi</h3>
+    <div id="actionPanel" class="hidden mt-4 w-full max-w-[360px] bg-white p-5 rounded-xl border shadow-md space-y-5">
+        <h3 class="text-xs font-bold text-gray-700 border-b pb-2 uppercase tracking-wider text-center">⚙️ Panel Kontrol Owner</h3>
+        
+        <div class="bg-amber-50 border border-amber-200 p-3 rounded-lg text-justify text-[11px] font-medium text-amber-900 leading-relaxed">
+            Pilih format kuitansi. File akan diunduh ke HP Anda terlebih dahulu, lalu otomatis membuka WhatsApp. <br><b>⚠️ Anda harus menempelkan file yang terunduh tersebut secara manual di dalam ruang chat WA.</b>
+        </div>
         
         <div class="space-y-2">
-            <label class="block text-[11px] font-bold text-gray-500 uppercase">1. Pilih Dokumen yang Mau Dikirim:</label>
-            <div class="grid grid-cols-2 gap-2">
-                <label class="flex items-center gap-2 p-2.5 border rounded-lg cursor-pointer hover:bg-gray-50 text-xs">
+            <label class="block text-[11px] font-bold text-gray-500 uppercase">Format Dokumen Kuitansi:</label>
+            <div class="grid grid-cols-2 gap-3">
+                <label class="flex items-center justify-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 bg-gray-50 text-xs font-bold">
                     <input type="radio" name="fileType" value="png" checked class="h-4 w-4 text-indigo-600">
-                    <span>🖼️ Gambar (.PNG)</span>
+                    <span>🖼️ .PNG</span>
                 </label>
-                <label class="flex items-center gap-2 p-2.5 border rounded-lg cursor-pointer hover:bg-gray-50 text-xs">
+                <label class="flex items-center justify-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 text-xs font-bold">
                     <input type="radio" name="fileType" value="pdf" class="h-4 w-4 text-indigo-600">
-                    <span>📄 Berkas (.PDF)</span>
+                    <span>📄 .PDF</span>
                 </label>
             </div>
         </div>
 
-        <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-200">
-            <label class="flex items-center gap-2.5 cursor-pointer text-xs font-semibold text-gray-700">
-                <input type="checkbox" id="downloadOpt" checked class="h-4 w-4 rounded text-indigo-600">
-                <span>💾 Simpan file yang dipilih ke HP Owner</span>
-            </label>
-        </div>
-
-        <button onclick="eksekusiVerifikasiOwner()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-xs shadow tracking-wide transition cursor-pointer text-center">
-            🚀 PROSES VERIFIKASI & BUKA WHATSAPP
+        <button onclick="prosesUnduhDanKirim()" id="btnAksi" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl text-xs shadow-md tracking-widest transition cursor-pointer text-center uppercase">
+            ⬇️ Unduh & Buka WhatsApp
         </button>
     </div>
 
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbyqEB2SCl1Rw9x-ScuHknTldaUD6RPVuUkDyc1czCnR7W1Ar0lQGZquh7wtH7TgMwFK/exec";
-        
         const urlParams = new URLSearchParams(window.location.search);
         const row = urlParams.get('row');
         let whatsappLinkTarget = "#";
+        let isProcessing = false;
 
         if (!row) {
             document.getElementById('loading').classList.add('hidden');
             document.getElementById('error').classList.remove('hidden');
-            document.getElementById('errorMsg').innerText = "Parameter row kosong.";
+            document.getElementById('errorMsg').innerText = "Parameter baris kosong.";
         } else {
             fetch(API_URL + "?action=api_verify_payment&row=" + row)
                 .then(res => res.json())
@@ -127,40 +120,68 @@
                 .catch(err => {
                     document.getElementById('loading').classList.add('hidden');
                     document.getElementById('error').classList.remove('hidden');
-                    document.getElementById('errorMsg').innerText = "Gagal terhubung ke database.";
+                    document.getElementById('errorMsg').innerText = "Gagal menyinkronkan data kuitansi.";
                 });
         }
 
-        function eksekusiVerifikasiOwner() {
-            const tipeFile = document.querySelector('input[name="fileType"]:checked').value;
-            const wajibDownload = document.getElementById('downloadOpt').checked;
-            const currentId = document.getElementById('txId').innerText || "KUITANSI";
+        function prosesUnduhDanKirim() {
+            if (isProcessing) return;
+            isProcessing = true;
+            
+            const btn = document.getElementById('btnAksi');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "⏳ MENYIAPKAN FILE...";
+            btn.classList.replace('bg-emerald-600', 'bg-gray-500');
 
-            if (tipeFile === "pdf") {
-                if (wajibDownload) {
-                    window.print();
+            const tipeFile = document.querySelector('input[name="fileType"]:checked').value;
+            const currentId = document.getElementById('txId').innerText || "KUITANSI";
+            const target = document.getElementById('kuitansiCaptureArea');
+
+            // Render gambar (Resolusi tinggi)
+            htmlToImage.toPng(target, { backgroundColor: '#ffffff', pixelRatio: 3 })
+            .then(function (dataUrl) {
+                if (tipeFile === "pdf") {
+                    // Konversi Gambar ke PDF murni tanpa memanggil fungsi print OS
+                    const { jsPDF } = window.jspdf;
+                    const widthPx = target.offsetWidth;
+                    const heightPx = target.offsetHeight;
+                    
+                    const pdf = new jsPDF({
+                        orientation: 'portrait',
+                        unit: 'px',
+                        format: [widthPx, heightPx]
+                    });
+                    
+                    pdf.addImage(dataUrl, 'PNG', 0, 0, widthPx, heightPx);
+                    pdf.save(`Kuitansi_${currentId}.pdf`);
+                } else {
+                    // Unduh Gambar Normal
+                    const link = document.createElement('a');
+                    link.download = `Kuitansi_${currentId}.png`;
+                    link.href = dataUrl;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
                 }
-                window.location.href = whatsappLinkTarget;
-            } else {
-                const target = document.getElementById('kuitansiCaptureArea');
-                htmlToImage.toPng(target, { backgroundColor: '#ffffff', pixelRatio: 3 })
-                .then(function (dataUrl) {
-                    if (wajibDownload) {
-                        const link = document.createElement('a');
-                        link.download = `Kuitansi_${currentId}.png`;
-                        link.href = dataUrl;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                    }
+
+                btn.innerHTML = "✅ FILE TERUNDUH. MEMBUKA WA...";
+                
+                // Jeda untuk memastikan file selesai diunduh oleh HP sebelum pindah aplikasi
+                setTimeout(() => {
+                    window.location.href = whatsappLinkTarget;
                     setTimeout(() => {
-                        window.location.href = whatsappLinkTarget;
-                    }, 500);
-                })
-                .catch(function (error) {
-                    alert("Gagal memproses gambar: " + error.message);
-                });
-            }
+                        btn.innerHTML = originalText;
+                        btn.classList.replace('bg-gray-500', 'bg-emerald-600');
+                        isProcessing = false;
+                    }, 2000);
+                }, 1000);
+            })
+            .catch(function (error) {
+                alert("Sistem gagal merender dokumen kuitansi: " + error.message);
+                btn.innerHTML = originalText;
+                btn.classList.replace('bg-gray-500', 'bg-emerald-600');
+                isProcessing = false;
+            });
         }
     </script>
 </body>

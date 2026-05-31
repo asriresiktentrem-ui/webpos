@@ -51,7 +51,7 @@ function doGet(e) {
             return ContentService.createTextOutput(JSON.stringify({ status: "success", waLink: waLink })).setMimeType(ContentService.MimeType.JSON);
         }
         
-        // JALUR B: API Verifikasi Pembayaran Kos (Menyesuaikan Struktur Kolom Baru)
+        // JALUR B: API Verifikasi Pembayaran
         if (e.parameter.action === "api_verify_payment") {
             const row = parseInt(e.parameter.row);
             const paySheet = ss.getSheetByName("Pembayaran");
@@ -60,25 +60,22 @@ function doGet(e) {
                 return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "Sheet Pembayaran tidak ditemukan" })).setMimeType(ContentService.MimeType.JSON);
             }
             
-            // Update status menjadi Terverifikasi di Kolom 3 (C)
             paySheet.getRange(row, 3).setValue("Terverifikasi");
             
-            // Membaca data berdasarkan urutan susunan kolom baru
             const noKamar = paySheet.getRange(row, 4).getValue().toString().trim();
             const namaPenyewa = paySheet.getRange(row, 5).getValue();
             let rawNoWa = paySheet.getRange(row, 6).getValue().toString().trim();
             const periode = paySheet.getRange(row, 7).getValue();
-            const jumlahBayar = paySheet.getRange(row, 8).getValue();
+            const rawJumlahBayar = paySheet.getRange(row, 8).getValue().toString().trim();
             const rawTanggal = paySheet.getRange(row, 9).getValue();
             
-            // Ambil ID Nota dari Kolom 1 (A), Jika kosong otomatis generate baru
+            // Generate ID Nota
             let invoiceId = paySheet.getRange(row, 1).getValue().toString().trim();
             if (invoiceId === "") {
                 invoiceId = "INV-" + Math.floor(100000 + Math.random() * 900000).toString();
                 paySheet.getRange(row, 1).setValue(invoiceId);
             }
             
-            // Format Tanggal Sederhana dd/MM/yyyy
             let tanggalFormat = "";
             try {
                 tanggalFormat = Utilities.formatDate(new Date(rawTanggal), Session.getScriptTimeZone(), "dd/MM/yyyy");
@@ -93,9 +90,11 @@ function doGet(e) {
                 noWa = "62" + noWa;
             }
             
-            const totalFormat = "Rp " + parseInt(jumlahBayar).toLocaleString('id-ID');
+            // Bersihkan angka dari format yang kacau
+            const cleanJumlahBayar = parseInt(rawJumlahBayar.replace(/[^0-9]/g, "")) || 0;
+            const totalFormat = "Rp " + cleanJumlahBayar.toLocaleString('id-ID');
             
-            const pesan = `KUITANSI DIGITAL RESMI - GRIYA ANANDA ✨\n\nTerima kasih *${namaPenyewa}*,\n\nPembayaran kontribusi sewa kos Anda telah kami terima dan dinyatakan *TERVERIFIKASI* oleh Pemilik Kos.\n\nBerikut adalah rincian tanda terima pembayaran Anda:\n- *ID Kuitansi:* ${invoiceId}\n- *Nomor Kamar:* Kamar ${noKamar}\n- *Periode Sewa:* ${periode} Bulan\n- *Total Pembayaran:* ${totalFormat}\n- *Tanggal Transfer:* ${tanggalFormat}\n- *Status:* LUNAS / TERVERIFIKASI\n\nTanda bukti transaksi ini sah dan telah dicatat ke dalam sistem log database internal Griya Ananda. Dokumen fisik tanda terima akan dilampirkan oleh Owner melalui pesan ini.\n\nTerima kasih atas kedisiplinan Anda. Salam hangat! 🙏`;
+            const pesan = `KUITANSI DIGITAL RESMI - GRIYA ANANDA ✨\n\nTerima kasih *${namaPenyewa}*,\n\nPembayaran kontribusi sewa kos Anda telah kami terima dan dinyatakan *TERVERIFIKASI* oleh Pemilik Kos.\n\nBerikut adalah rincian tanda terima pembayaran Anda:\n- *ID Kuitansi:* ${invoiceId}\n- *Nomor Kamar:* Kamar ${noKamar}\n- *Periode Sewa:* ${periode} Bulan\n- *Total Pembayaran:* ${totalFormat}\n- *Tanggal Transfer:* ${tanggalFormat}\n- *Status:* LUNAS / TERVERIFIKASI\n\nTanda bukti transaksi ini sah dan telah dicatat ke dalam sistem log database internal Griya Ananda. Dokumen fisik kuitansi terlampir pada pesan ini.\n\nTerima kasih atas kedisiplinan Anda. Salam hangat! 🙏`;
             const waLink = "https://api.whatsapp.com/send?phone=" + noWa + "&text=" + encodeURIComponent(pesan);
             
             return ContentService.createTextOutput(JSON.stringify({ 
@@ -137,7 +136,9 @@ function doGet(e) {
                 
                 for (let i = 0; i < masterValues.length; i++) {
                     const kamar = masterValues[i][0].toString().trim();
-                    const harga = parseInt(masterValues[i][1]) || 0;
+                    // Ekstrak angka murni agar tidak terpengaruh format Rupiah di sheets
+                    const rawHarga = masterValues[i][1].toString().replace(/[^0-9]/g, "");
+                    const harga = parseInt(rawHarga) || 0;
                     
                     if (kamar === "") continue;
                     
@@ -230,7 +231,6 @@ function doPost(e) {
             
             const randomInvoiceId = "INV-" + Math.floor(100000 + Math.random() * 900000).toString();
             
-            // Tulis data mengikuti urutan kolom baru secara presisi
             sheet.appendRow([
                 randomInvoiceId,
                 new Date(),
@@ -239,7 +239,7 @@ function doPost(e) {
                 data.nama_penyewa,
                 "'" + data.no_wa,
                 data.periode,
-                data.jumlah_bayar,
+                parseInt(data.jumlah_bayar) || 0, // Pastikan tersimpan sebagai angka
                 data.tanggal,
                 fileUrl,
                 formulaVerifikasi
