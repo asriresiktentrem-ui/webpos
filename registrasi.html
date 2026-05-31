@@ -10,15 +10,18 @@
 
     <div class="max-w-md mx-auto space-y-6">
         
+        <!-- HEADER -->
         <div id="headerArea" class="bg-blue-600 text-white p-4 rounded-xl shadow-md text-center">
             <h1 class="text-xl font-bold">Griya Ananda</h1>
             <p class="text-xs opacity-80">Formulir Registrasi Hunian Kos</p>
             <p class="text-[10px] font-mono mt-1 opacity-60">V 1.3</p>
         </div>
 
+        <!-- FORM REGISTRASI -->
         <div id="formArea" class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
             <form id="registrationForm" class="space-y-5">
                 
+                <!-- SECTION DATA PENYEWA -->
                 <div class="space-y-3">
                     <h3 class="text-sm font-bold text-blue-600 border-b pb-1">DATA CALON PENYEWA</h3>
                     <div>
@@ -45,6 +48,7 @@
                     </div>
                 </div>
 
+                <!-- SECTION PENANGGUNG JAWAB -->
                 <div class="space-y-3 pt-2">
                     <h3 class="text-sm font-bold text-blue-600 border-b pb-1">IDENTITAS PENANGGUNG JAWAB</h3>
                     <div>
@@ -71,6 +75,7 @@
             </form>
         </div>
 
+        <!-- NOTIFIKASI SUKSES VERIFIKASI -->
         <div id="wrapperSuccess" class="hidden bg-white p-6 rounded-xl shadow-md border border-gray-200 text-center space-y-4">
             <div class="text-5xl">📝</div>
             <h2 class="text-xl font-bold text-gray-800">Registrasi Berhasil Dikirim!</h2>
@@ -102,10 +107,11 @@
                         return;
                     }
                     selectKamar.innerHTML = '<option value="">-- Pilih Nomor Kamar --</option>';
-                    result.data.forEach(kamar => {
+                    result.data.forEach(item => {
                         const opt = document.createElement('option');
-                        opt.value = kamar;
-                        opt.innerText = "Kamar " + kamar;
+                        // Fix: Ambil properti item.kamar untuk menampilkan nomor kamar dengan benar
+                        opt.value = item.kamar;
+                        opt.innerText = "Kamar " + item.kamar;
                         selectKamar.appendChild(opt);
                     });
                 } else {
@@ -113,7 +119,6 @@
                 }
             } catch (err) {
                 console.error(err);
-                alert("DEBUG ERROR SERVER MASTER:\n" + err.message + "\n\nPastikan Deployment GAS sudah diubah ke 'Anyone'.");
                 selectKamar.innerHTML = '<option value="">Gagal terhubung ke server master</option>';
             }
         });
