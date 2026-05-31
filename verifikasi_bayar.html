@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuitansi Transaksi Resmi - Griya Ananda</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        @media print {
+            body { background: white; padding: 0; }
+            .no-print { display: none !important; }
+            .print-card { box-shadow: none !important; border: 1px solid #000 !important; margin: 0 !important; width: 100% !important; max-width: 100% !important; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center font-sans text-gray-800 p-4">
+    
+    <div id="kuitansiBox" class="bg-white p-6 rounded-xl shadow-md max-w-sm w-full border border-gray-200 print-card space-y-5">
+        
+        <div id="loading" class="text-center py-8 space-y-3">
+            <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-indigo-600 border-t-transparent"></div>
+            <p class="text-sm font-semibold text-gray-500">Mengeksekusi Validasi Pembayaran...</p>
+        </div>
+
+        <div id="successContent" class="hidden space-y-4">
+            
+            <div class="text-center border-b pb-3 border-dashed border-gray-300">
+                <h2 class="text-xl font-black text-gray-800 tracking-wide">GRIYA ANANDA</h2>
+                <p class="text-xs text-gray-500 font-medium">Hunian Kos Eksklusif & Nyaman</p>
+                <div class="mt-2 inline-block bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                    ✓ Terverifikasi Lunas
+                </div>
+            </div>
+
+            <div class="space-y-2.5 font-mono text-xs">
+                <div class="flex justify-between"><span class="text-gray-500">ID NOTA  :</span><span id="txId" class="font-bold text-gray-800"></span></div>
+                <div class="flex justify-between"><span class="text-gray-500">TANGGAL  :</span><span id="txTanggal" class="text-gray-800"></span></div>
+                <hr class="border-dashed border-gray-200 my-1">
+                <div class="flex justify-between"><span class="text-gray-500">PENGHUNI :</span><span id="txNama" class="font-bold text-gray-800 uppercase"></span></div>
+                <div class="flex justify-between"><span class="text-gray-500">NO KAMAR :</span><span id="txKamar" class="text-gray-800 font-bold"></span></div>
+                <div class="flex justify-between"><span class="text-gray-500">PERIODE  :</span><span id="txPeriode" class="text-gray-800"></span></div>
+                <hr class="border-dashed border-gray-300 my-2">
+                <div class="flex justify-between text-sm font-bold bg-gray-50 p-2 rounded border"><span class="text-indigo-700">TOTAL    :</span><span id="txTotal" class="text-indigo-700"></span></div>
+            </div>
+
+            <div class="text-center border-t pt-3 border-dashed border-gray-300 text-[10px] text-gray-400 leading-relaxed">
+                Tanda terima ini merupakan bukti pembayaran kontribusi sewa kos Griya Ananda yang sah dan diterbitkan secara elektronik oleh sistem internal.
+            </div>
+        </div>
+
+        <div id="error" class="hidden text-center py-6 space-y-3">
+            <div class="text-5xl">❌</div>
+            <h2 class="text-lg font-bold text-red-600">Gagal Memproses Nota</h2>
+            <p id="errorMsg" class="text-xs text-gray-500">Jalur baris spreadsheet tidak valid.</p>
+        </div>
+    </div>
+
+    <div id="actionPanel" class="hidden mt-4 w-full max-w-sm space-y-2 no-print">
+        <button onclick="window.print()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 rounded-xl text-xs shadow transition cursor-pointer">
+            🖨️ Cetak / Simpan Berkas Kuitansi (.PDF)
+        </button>
+        <a id="btnWa" href="#" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-xs shadow transition flex items-center justify-center">
+            💬 Teruskan Tanda Terima ke WhatsApp Penyewa
+        </a>
+    </div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbyqEB2SCl1Rw9x-ScuHknTldaUD6RPVuUkDyc1czCnR7W1Ar0lQGZquh7wtH7TgMwFK/exec";
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const row = urlParams.get('row');
+
+        if (!row) {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('error').classList.remove('hidden');
+            document.getElementById('errorMsg').innerText = "Parameter row transaksi terdeteksi kosong.";
+        } else {
+            fetch(API_URL + "?action=api_verify_payment&row=" + row)
+                .then(res => res.json())
+                .then(result => {
+                    document.getElementById('loading').classList.add('hidden');
+                    if (result.status === "success") {
+                        document.getElementById('successContent').classList.remove('hidden');
+                        document.getElementById('actionPanel').classList.remove('hidden');
+                        
+                        // Isi data nota kuitansi secara presisi
+                        document.getElementById('txId').innerText = result.details.invoice_id;
+                        document.getElementById('txTanggal').innerText = result.details.tanggal;
+                        document.getElementById('txNama').innerText = result.details.penyewa;
+                        document.getElementById('txKamar').innerText = "Kamar " + result.details.kamar;
+                        document.getElementById('txPeriode').innerText = result.details.periode;
+                        document.getElementById('txTotal').innerText = result.details.total;
+                        
+                        document.getElementById('btnWa').href = result.waLink;
+                        
+                        // Lempar otomatis ke WA setelah jeda singkat
+                        setTimeout(() => {
+                            window.location.href = result.waLink;
+                        }, 1200);
+                    } else {
+                        document.getElementById('error').classList.remove('hidden');
+                        document.getElementById('errorMsg').innerText = result.message;
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('loading').classList.add('hidden');
+                    document.getElementById('error').classList.remove('hidden');
+                    document.getElementById('errorMsg').innerText = "Gagal menyambungkan transaksi ke server GAS.";
+                });
+        }
+    </script>
+</body>
+</html>
