@@ -14,7 +14,7 @@
         <div id="headerArea" class="bg-indigo-600 text-white p-4 rounded-xl shadow-md text-center">
             <h1 class="text-xl font-bold">Griya Ananda</h1>
             <p class="text-xs opacity-80">Laporan Pembayaran Sewa Hunian</p>
-            <p class="text-[10px] font-mono mt-1 opacity-60">V 1.4</p>
+            <p class="text-[10px] font-mono mt-1 opacity-60">V 1.5</p>
         </div>
 
         <!-- AREA FORM & INFO REKENING -->
@@ -119,6 +119,13 @@
         }
 
         window.addEventListener('DOMContentLoaded', async () => {
+            // Set default tanggal ke hari ini saat halaman dimuat
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            document.getElementById('tanggal').value = `${yyyy}-${mm}-${dd}`;
+
             const selectKamar = document.getElementById('nomorKamar');
             try {
                 const response = await fetch(API_URL + "?action=getKamar");
@@ -148,7 +155,24 @@
             }
         });
 
-        // Auto-fill nama penyewa & no wa saat kamar dipilih
+        // Fungsi untuk mengkalkulasi ulang jumlah bayar
+        function kalkulasiHarga() {
+            const kamarTerpilih = document.getElementById('nomorKamar').value;
+            const inputPeriode = document.getElementById('periode').value;
+            
+            if (kamarTerpilih) {
+                const dataTarget = masterDataKamar.find(k => k.kamar === kamarTerpilih);
+                if (dataTarget) {
+                    const periode = parseInt(inputPeriode) || 1;
+                    const totalHarga = dataTarget.harga * periode;
+                    document.getElementById('jumlahBayar').value = totalHarga;
+                }
+            } else {
+                document.getElementById('jumlahBayar').value = "";
+            }
+        }
+
+        // Auto-fill saat kamar dipilih
         document.getElementById('nomorKamar').addEventListener('change', function() {
             const kamarTerpilih = this.value;
             const dataTarget = masterDataKamar.find(k => k.kamar === kamarTerpilih);
@@ -156,15 +180,16 @@
             if (dataTarget) {
                 document.getElementById('namaPenyewa').value = dataTarget.penyewa !== "Belum Ada Penghuni" ? dataTarget.penyewa : "";
                 document.getElementById('noWa').value = dataTarget.no_wa || "";
-                
-                // Set default tanggal ke hari ini
-                const today = new Date();
-                const yyyy = today.getFullYear();
-                const mm = String(today.getMonth() + 1).padStart(2, '0');
-                const dd = String(today.getDate()).padStart(2, '0');
-                document.getElementById('tanggal').value = `${yyyy}-${mm}-${dd}`;
+                kalkulasiHarga();
+            } else {
+                document.getElementById('namaPenyewa').value = "";
+                document.getElementById('noWa').value = "";
+                document.getElementById('jumlahBayar').value = "";
             }
         });
+
+        // Kalkulasi ulang otomatis jika periode diubah
+        document.getElementById('periode').addEventListener('input', kalkulasiHarga);
 
         const convertToBase64 = (file) => {
             return new Promise((resolve, reject) => {
