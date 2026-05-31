@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kuitansi Transaksi Resmi - Griya Ananda</title>
+    <title>Panel Owner - Kuitansi Griya Ananda</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
     <style>
@@ -27,11 +27,10 @@
         
         <div id="loading" class="text-center py-8 space-y-3 no-print">
             <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-indigo-600 border-t-transparent"></div>
-            <p class="text-sm font-semibold text-gray-500">Mengeksekusi Validasi Pembayaran...</p>
+            <p class="text-sm font-semibold text-gray-500">Memproses Data Kuitansi...</p>
         </div>
 
         <div id="successContent" class="hidden space-y-4">
-            
             <div class="text-center border-b pb-3 border-dashed border-gray-300">
                 <h2 class="text-xl font-black text-gray-800 tracking-wide">GRIYA ANANDA</h2>
                 <p class="text-xs text-gray-500 font-medium">Hunian Kos Eksklusif & Nyaman</p>
@@ -52,34 +51,44 @@
             </div>
 
             <div class="text-center border-t pt-3 border-dashed border-gray-300 text-[10px] text-gray-400 leading-relaxed">
-                Tanda terima ini merupakan bukti pembayaran kontribusi sewa kos Griya Ananda yang sah dan diterbitkan secara elektronik oleh sistem internal.
+                Tanda terima bukti pembayaran internal milik manajemen Griya Ananda.
             </div>
         </div>
 
         <div id="error" class="hidden text-center py-6 space-y-3 no-print">
             <div class="text-5xl">❌</div>
-            <h2 class="text-lg font-bold text-red-600">Gagal Memproses Nota</h2>
-            <p id="errorMsg" class="text-xs text-gray-500">Jalur baris spreadsheet tidak valid.</p>
+            <h2 class="text-lg font-bold text-red-600">Gagal Memproses</h2>
+            <p id="errorMsg" class="text-xs text-gray-500">Jalur tidak valid.</p>
         </div>
     </div>
 
-    <div id="actionPanel" class="hidden mt-4 w-full max-w-sm space-y-3 no-print">
-        <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-center text-xs font-semibold text-amber-900 shadow-sm">
-            💡 Pilih salah satu format dokumen kuitansi di bawah ini terlebih dahulu untuk mengaktifkan tombol kirim WhatsApp resmi.
-        </div>
+    <div id="actionPanel" class="hidden mt-4 w-full max-w-sm bg-white p-4 rounded-xl border shadow-sm space-y-4 no-print">
+        <h3 class="text-xs font-bold text-gray-700 border-b pb-1.5 uppercase tracking-wider">⚙️ Panel Kontrol Verifikasi</h3>
         
-        <div class="grid grid-cols-2 gap-2">
-            <button onclick="unduhGambarPng()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-2 rounded-xl text-xs shadow transition cursor-pointer text-center">
-                📷 Simpan Gambar (.PNG)
-            </button>
-            <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-2 rounded-xl text-xs shadow transition cursor-pointer text-center">
-                📄 Cetak Berkas (.PDF)
-            </button>
+        <div class="space-y-2">
+            <label class="block text-[11px] font-bold text-gray-500 uppercase">1. Pilih Dokumen yang Mau Dikirim:</label>
+            <div class="grid grid-cols-2 gap-2">
+                <label class="flex items-center gap-2 p-2.5 border rounded-lg cursor-pointer hover:bg-gray-50 text-xs">
+                    <input type="radio" name="fileType" value="png" checked class="h-4 w-4 text-indigo-600">
+                    <span>🖼️ Gambar (.PNG)</span>
+                </label>
+                <label class="flex items-center gap-2 p-2.5 border rounded-lg cursor-pointer hover:bg-gray-50 text-xs">
+                    <input type="radio" name="fileType" value="pdf" class="h-4 w-4 text-indigo-600">
+                    <span>📄 Berkas (.PDF)</span>
+                </label>
+            </div>
         </div>
 
-        <a id="btnWa" href="#" onclick="return cekIzinKirim(event)" class="w-full bg-gray-400 text-white font-bold py-3 rounded-xl text-xs shadow transition flex items-center justify-center gap-1 cursor-not-allowed">
-            💬 Kirim Notifikasi Kuitansi ke WhatsApp
-        </a>
+        <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-200">
+            <label class="flex items-center gap-2.5 cursor-pointer text-xs font-semibold text-gray-700">
+                <input type="checkbox" id="downloadOpt" checked class="h-4 w-4 rounded text-indigo-600">
+                <span>💾 Simpan file yang dipilih ke HP Owner</span>
+            </label>
+        </div>
+
+        <button onclick="eksekusiVerifikasiOwner()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-xs shadow tracking-wide transition cursor-pointer text-center">
+            🚀 PROSES VERIFIKASI & BUKA WHATSAPP
+        </button>
     </div>
 
     <script>
@@ -87,13 +96,12 @@
         
         const urlParams = new URLSearchParams(window.location.search);
         const row = urlParams.get('row');
-        let fileSudahDisiapkan = false;
         let whatsappLinkTarget = "#";
 
         if (!row) {
             document.getElementById('loading').classList.add('hidden');
             document.getElementById('error').classList.remove('hidden');
-            document.getElementById('errorMsg').innerText = "Parameter row transaksi terdeteksi kosong.";
+            document.getElementById('errorMsg').innerText = "Parameter row kosong.";
         } else {
             fetch(API_URL + "?action=api_verify_payment&row=" + row)
                 .then(res => res.json())
@@ -106,7 +114,7 @@
                         document.getElementById('txId').innerText = result.details.invoice_id;
                         document.getElementById('txTanggal').innerText = result.details.tanggal;
                         document.getElementById('txNama').innerText = result.details.penyewa;
-                        document.getElementById('txKamar').innerText = "Kamar " + result.details.kamar;
+                        document.getElementById('txKamar').innerText = result.details.kamar;
                         document.getElementById('txPeriode').innerText = result.details.periode;
                         document.getElementById('txTotal').innerText = result.details.total;
                         
@@ -119,54 +127,41 @@
                 .catch(err => {
                     document.getElementById('loading').classList.add('hidden');
                     document.getElementById('error').classList.remove('hidden');
-                    document.getElementById('errorMsg').innerText = "Gagal menyambungkan transaksi ke server GAS.";
+                    document.getElementById('errorMsg').innerText = "Gagal terhubung ke database.";
                 });
         }
 
-        function aktifkanTombolWa() {
-            fileSudahDisiapkan = true;
-            const btn = document.getElementById('btnWa');
-            btn.href = whatsappLinkTarget;
-            btn.classList.remove('bg-gray-400', 'cursor-not-allowed');
-            btn.classList.add('bg-emerald-500', 'hover:bg-emerald-600');
-        }
-
-        function cekIzinKirim(e) {
-            if (!fileSudahDisiapkan) {
-                e.preventDefault();
-                alert("Pilih dan unduh dokumen kuitansi (Format Gambar PNG atau PDF) di atas terlebih dahulu!");
-                return false;
-            }
-            return true;
-        }
-
-        function unduhGambarPng() {
-            const target = document.getElementById('kuitansiCaptureArea');
+        function eksekusiVerifikasiOwner() {
+            const tipeFile = document.querySelector('input[name="fileType"]:checked').value;
+            const wajibDownload = document.getElementById('downloadOpt').checked;
             const currentId = document.getElementById('txId').innerText || "KUITANSI";
-            
-            htmlToImage.toPng(target, { 
-                backgroundColor: '#ffffff',
-                pixelRatio: 3 
-            })
-            .then(function (dataUrl) {
-                const link = document.createElement('a');
-                link.download = `Kuitansi_${currentId}.png`;
-                link.href = dataUrl;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                aktifkanTombolWa();
-            })
-            .catch(function (error) {
-                console.error(error);
-                alert("Gagal memproses ekspor gambar: " + error.message);
-            });
-        }
 
-        // Event listener deteksi aksi cetak PDF bawaan sistem/browser
-        window.onafterprint = function() {
-            aktifkanTombolWa();
-        };
+            if (tipeFile === "pdf") {
+                if (wajibDownload) {
+                    window.print();
+                }
+                window.location.href = whatsappLinkTarget;
+            } else {
+                const target = document.getElementById('kuitansiCaptureArea');
+                htmlToImage.toPng(target, { backgroundColor: '#ffffff', pixelRatio: 3 })
+                .then(function (dataUrl) {
+                    if (wajibDownload) {
+                        const link = document.createElement('a');
+                        link.download = `Kuitansi_${currentId}.png`;
+                        link.href = dataUrl;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    }
+                    setTimeout(() => {
+                        window.location.href = whatsappLinkTarget;
+                    }, 500);
+                })
+                .catch(function (error) {
+                    alert("Gagal memproses gambar: " + error.message);
+                });
+            }
+        }
     </script>
 </body>
 </html>

@@ -51,7 +51,7 @@ function doGet(e) {
             return ContentService.createTextOutput(JSON.stringify({ status: "success", waLink: waLink })).setMimeType(ContentService.MimeType.JSON);
         }
         
-        // JALUR B: API Verifikasi Pembayaran Kos + Return Detail Meta Kuitansi
+        // JALUR B: API Verifikasi Pembayaran Kos (Menyesuaikan Struktur Kolom Baru)
         if (e.parameter.action === "api_verify_payment") {
             const row = parseInt(e.parameter.row);
             const paySheet = ss.getSheetByName("Pembayaran");
@@ -60,14 +60,31 @@ function doGet(e) {
                 return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "Sheet Pembayaran tidak ditemukan" })).setMimeType(ContentService.MimeType.JSON);
             }
             
-            paySheet.getRange(row, 2).setValue("Terverifikasi");
+            // Update status menjadi Terverifikasi di Kolom 3 (C)
+            paySheet.getRange(row, 3).setValue("Terverifikasi");
             
-            const noKamar = paySheet.getRange(row, 3).getValue().toString().trim();
-            const namaPenyewa = paySheet.getRange(row, 4).getValue();
-            let rawNoWa = paySheet.getRange(row, 5).getValue().toString().trim();
-            const periode = paySheet.getRange(row, 6).getValue();
-            const jumlahBayar = paySheet.getRange(row, 7).getValue();
-            const tanggalTx = paySheet.getRange(row, 8).getValue();
+            // Membaca data berdasarkan urutan susunan kolom baru
+            const noKamar = paySheet.getRange(row, 4).getValue().toString().trim();
+            const namaPenyewa = paySheet.getRange(row, 5).getValue();
+            let rawNoWa = paySheet.getRange(row, 6).getValue().toString().trim();
+            const periode = paySheet.getRange(row, 7).getValue();
+            const jumlahBayar = paySheet.getRange(row, 8).getValue();
+            const rawTanggal = paySheet.getRange(row, 9).getValue();
+            
+            // Ambil ID Nota dari Kolom 1 (A), Jika kosong otomatis generate baru
+            let invoiceId = paySheet.getRange(row, 1).getValue().toString().trim();
+            if (invoiceId === "") {
+                invoiceId = "INV-" + Math.floor(100000 + Math.random() * 900000).toString();
+                paySheet.getRange(row, 1).setValue(invoiceId);
+            }
+            
+            // Format Tanggal Sederhana dd/MM/yyyy
+            let tanggalFormat = "";
+            try {
+                tanggalFormat = Utilities.formatDate(new Date(rawTanggal), Session.getScriptTimeZone(), "dd/MM/yyyy");
+            } catch (c) {
+                tanggalFormat = rawTanggal.toString();
+            }
             
             let noWa = rawNoWa.replace(/[^0-9+]/g, "");
             if (noWa.startsWith("0")) {
@@ -77,10 +94,8 @@ function doGet(e) {
             }
             
             const totalFormat = "Rp " + parseInt(jumlahBayar).toLocaleString('id-ID');
-            const invoiceId = "INV-" + Date.now().toString().slice(-6);
-            const webJembatanBayarUrl = "https://asriresiktentrem-ui.github.io/webpos/verifikasi_bayar.html?row=" + row;
             
-            const pesan = `KUITANSI DIGITAL RESMI - GRIYA ANANDA ✨\n\nTerima kasih *${namaPenyewa}*,\n\nPembayaran kontribusi sewa kos Anda telah kami terima dan dinyatakan *TERVERIFIKASI* oleh Pemilik Kos.\n\nBerikut adalah rincian tanda terima pembayaran Anda:\n- *ID Kuitansi:* ${invoiceId}\n- *Nomor Kamar:* Kamar ${noKamar}\n- *Periode Sewa:* ${periode} Bulan\n- *Total Pembayaran:* ${totalFormat}\n- *Tanggal Transfer:* ${tanggalTx}\n- *Status:* LUNAS / TERVERIFIKASI\n\nTanda bukti transaksi ini sah. Anda dapat melihat, menyimpan dalam bentuk cetak dokumen GAMBAR (.PNG) atau berkas (.PDF) resmi melalui tautan kuitansi online kami berikut:\n👉 ${webJembatanBayarUrl}\n\nTerima kasih atas kedisiplinan Anda. Salam hangat! 🙏`;
+            const pesan = `KUITANSI DIGITAL RESMI - GRIYA ANANDA ✨\n\nTerima kasih *${namaPenyewa}*,\n\nPembayaran kontribusi sewa kos Anda telah kami terima dan dinyatakan *TERVERIFIKASI* oleh Pemilik Kos.\n\nBerikut adalah rincian tanda terima pembayaran Anda:\n- *ID Kuitansi:* ${invoiceId}\n- *Nomor Kamar:* Kamar ${noKamar}\n- *Periode Sewa:* ${periode} Bulan\n- *Total Pembayaran:* ${totalFormat}\n- *Tanggal Transfer:* ${tanggalFormat}\n- *Status:* LUNAS / TERVERIFIKASI\n\nTanda bukti transaksi ini sah dan telah dicatat ke dalam sistem log database internal Griya Ananda. Dokumen fisik tanda terima akan dilampirkan oleh Owner melalui pesan ini.\n\nTerima kasih atas kedisiplinan Anda. Salam hangat! 🙏`;
             const waLink = "https://api.whatsapp.com/send?phone=" + noWa + "&text=" + encodeURIComponent(pesan);
             
             return ContentService.createTextOutput(JSON.stringify({ 
@@ -92,12 +107,12 @@ function doGet(e) {
                     penyewa: namaPenyewa,
                     periode: periode + " Bulan",
                     total: totalFormat,
-                    tanggal: tanggalTx
+                    tanggal: tanggalFormat
                 }
             })).setMimeType(ContentService.MimeType.JSON);
         }
         
-        // JALUR C: Sinkronisasi Daftar Kamar, Harga, Nama & No WA Penyewa Aktif (Fix Bug M1-M10)
+        // JALUR C: Sinkronisasi Daftar Kamar untuk Spinner
         if (e.parameter.action === "getKamar") {
             const masterSheet = ss.getSheetByName("DataMaster");
             const regSheet = ss.getSheetByName("Registrasi");
@@ -133,7 +148,6 @@ function doGet(e) {
                         const regStatus = regValues[j][1].toString().trim();
                         const regKamar = regValues[j][3].toString().trim();
                         
-                        // Perbaikan Krusial: Paksa komparasi berbasis String murni agar M1 dan angka normal cocok sempurna
                         if (regKamar === kamar && regStatus === "Terverifikasi") {
                             namaPenyewa = regValues[j][2].toString().trim();
                             noWaPenyewa = regValues[j][5].toString().trim();
@@ -197,7 +211,7 @@ function doPost(e) {
             if (!sheet) {
                 sheet = ss.insertSheet("Pembayaran");
                 sheet.appendRow([
-                    "Timestamp", "Status", "Nomor Kamar", "Nama Penyewa", "No WA Penyewa", 
+                    "ID Nota / Kuitansi", "Timestamp", "Status", "Nomor Kamar", "Nama Penyewa", "No WA Penyewa", 
                     "Periode", "Jumlah Bayar", "Tanggal Transfer", "Link Bukti Transfer", "Aksi Verifikasi"
                 ]);
             }
@@ -214,7 +228,11 @@ function doPost(e) {
             const webJembatanBayarUrl = "https://asriresiktentrem-ui.github.io/webpos/verifikasi_bayar.html";
             const formulaVerifikasi = `=HYPERLINK("${webJembatanBayarUrl}?row=" & ROW(); "🟢 VERIFIKASI & BUKTI")`;
             
+            const randomInvoiceId = "INV-" + Math.floor(100000 + Math.random() * 900000).toString();
+            
+            // Tulis data mengikuti urutan kolom baru secara presisi
             sheet.appendRow([
+                randomInvoiceId,
                 new Date(),
                 "Pending",
                 data.nomor_kamar.toString().trim(),
