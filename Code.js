@@ -27,7 +27,6 @@ function doGet(e) {
                 noWa = "62" + noWa;
             }
             
-            // PENYESUAIAN SKUAD KOLOM: C = Password, D = SSID
             const masterSheet = ss.getSheetByName("DataMaster");
             let passwordWifi = "Belum Diatur";
             let ssidWifi = "Belum Diatur";
@@ -63,7 +62,7 @@ function doGet(e) {
             
             paySheet.getRange(row, 2).setValue("Terverifikasi");
             
-            const noKamar = paySheet.getRange(row, 3).getValue();
+            const noKamar = paySheet.getRange(row, 3).getValue().toString().trim();
             const namaPenyewa = paySheet.getRange(row, 4).getValue();
             let rawNoWa = paySheet.getRange(row, 5).getValue().toString().trim();
             const periode = paySheet.getRange(row, 6).getValue();
@@ -79,8 +78,9 @@ function doGet(e) {
             
             const totalFormat = "Rp " + parseInt(jumlahBayar).toLocaleString('id-ID');
             const invoiceId = "INV-" + Date.now().toString().slice(-6);
+            const webJembatanBayarUrl = "https://asriresiktentrem-ui.github.io/webpos/verifikasi_bayar.html?row=" + row;
             
-            const pesan = `KUITANSI DIGITAL RESMI - GRIYA ANANDA ✨\n\nTerima kasih *${namaPenyewa}*,\n\nPembayaran kontribusi sewa kos Anda telah kami terima dan dinyatakan *TERVERIFIKASI* oleh Pemilik Kos.\n\nBerikut adalah rincian tanda terima pembayaran Anda:\n- *ID Kuitansi:* ${invoiceId}\n- *Nomor Kamar:* Kamar ${noKamar}\n- *Periode Sewa:* ${periode} Bulan\n- *Total Pembayaran:* ${totalFormat}\n- *Tanggal Transfer:* ${tanggalTx}\n- *Status:* LUNAS / TERVERIFIKASI\n\nTanda bukti transaksi ini sah dan telah dicatat ke dalam sistem database internal Griya Ananda. Anda juga dapat melihat atau mengunduh kuitansi cetak resmi melalui tautan verifikasi.\n\nTerima kasih atas kedisiplinan Anda. Salam hangat! 🙏`;
+            const pesan = `KUITANSI DIGITAL RESMI - GRIYA ANANDA ✨\n\nTerima kasih *${namaPenyewa}*,\n\nPembayaran kontribusi sewa kos Anda telah kami terima dan dinyatakan *TERVERIFIKASI* oleh Pemilik Kos.\n\nBerikut adalah rincian tanda terima pembayaran Anda:\n- *ID Kuitansi:* ${invoiceId}\n- *Nomor Kamar:* Kamar ${noKamar}\n- *Periode Sewa:* ${periode} Bulan\n- *Total Pembayaran:* ${totalFormat}\n- *Tanggal Transfer:* ${tanggalTx}\n- *Status:* LUNAS / TERVERIFIKASI\n\nTanda bukti transaksi ini sah. Anda dapat melihat, menyimpan dalam bentuk cetak dokumen GAMBAR (.PNG) atau berkas (.PDF) resmi melalui tautan kuitansi online kami berikut:\n👉 ${webJembatanBayarUrl}\n\nTerima kasih atas kedisiplinan Anda. Salam hangat! 🙏`;
             const waLink = "https://api.whatsapp.com/send?phone=" + noWa + "&text=" + encodeURIComponent(pesan);
             
             return ContentService.createTextOutput(JSON.stringify({ 
@@ -97,7 +97,7 @@ function doGet(e) {
             })).setMimeType(ContentService.MimeType.JSON);
         }
         
-        // JALUR C: Sinkronisasi Daftar Kamar, Harga, Nama & No WA Penyewa Aktif
+        // JALUR C: Sinkronisasi Daftar Kamar, Harga, Nama & No WA Penyewa Aktif (Fix Bug M1-M10)
         if (e.parameter.action === "getKamar") {
             const masterSheet = ss.getSheetByName("DataMaster");
             const regSheet = ss.getSheetByName("Registrasi");
@@ -132,6 +132,8 @@ function doGet(e) {
                     for (let j = regValues.length - 1; j >= 0; j--) {
                         const regStatus = regValues[j][1].toString().trim();
                         const regKamar = regValues[j][3].toString().trim();
+                        
+                        // Perbaikan Krusial: Paksa komparasi berbasis String murni agar M1 dan angka normal cocok sempurna
                         if (regKamar === kamar && regStatus === "Terverifikasi") {
                             namaPenyewa = regValues[j][2].toString().trim();
                             noWaPenyewa = regValues[j][5].toString().trim();
@@ -184,7 +186,7 @@ function doPost(e) {
             const formulaVerifikasi = `=HYPERLINK("${webJembatanUrl}?row=" & ROW(); "🟢 VERIFIKASI & KIRIM WA")`;
             
             sheet.appendRow([
-                new Date(), "Pending", data.nama, data.no_kamar, data.alamat, "'" + data.no_wa,
+                new Date(), "Pending", data.nama, data.no_kamar.toString().trim(), data.alamat, "'" + data.no_wa,
                 data.pj_nama, data.pj_alamat, data.pj_status, "'" + data.pj_wa, fileUrl, formulaVerifikasi
             ]);
             
@@ -215,7 +217,7 @@ function doPost(e) {
             sheet.appendRow([
                 new Date(),
                 "Pending",
-                data.nomor_kamar,
+                data.nomor_kamar.toString().trim(),
                 data.nama_penyewa,
                 "'" + data.no_wa,
                 data.periode,

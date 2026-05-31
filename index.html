@@ -56,7 +56,7 @@
         <div id="headerArea" class="bg-indigo-600 text-white p-4 rounded-xl shadow-md text-center">
             <h1 class="text-xl font-bold">Sistem Pembayaran Kos</h1>
             <p class="text-xs opacity-80">Formulir Laporan Penyewa Kamar</p>
-            <p class="text-[10px] font-mono mt-1 opacity-60">V 3.0</p>
+            <p class="text-[10px] font-mono mt-1 opacity-60">V 1.2</p>
         </div>
 
         <div id="formArea" class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
@@ -166,7 +166,7 @@
                     selectKamar.innerHTML = '<option value="">-- Pilih Nomor Kamar --</option>';
                     dbMasterKamar.forEach(item => {
                         const opt = document.createElement('option');
-                        opt.value = item.kamar;
+                        opt.value = item.kamar.toString().trim();
                         opt.innerText = "Kamar " + item.kamar;
                         selectKamar.appendChild(opt);
                     });
@@ -180,7 +180,7 @@
         });
 
         function kalkulasiPembayaran() {
-            const kamarTerpilih = selectKamar.value;
+            const kamarTerpilih = selectKamar.value.toString().trim();
             const periodeBulan = parseInt(selectPeriode.value) || 1;
             
             if (!kamarTerpilih) {
@@ -191,7 +191,7 @@
                 return;
             }
             
-            const matchData = dbMasterKamar.find(item => item.kamar === kamarTerpilih);
+            const matchData = dbMasterKamar.find(item => item.kamar.toString().trim() === kamarTerpilih);
             if (matchData) {
                 inputNama.value = matchData.penyewa;
                 inputWa.value = matchData.no_wa;
