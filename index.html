@@ -3,207 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Bukti Pembayaran Kos</title>
+    <title>Form Laporan Pembayaran Kos</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
-    <style>
-        #notaVisual {
-            background-color: #ffffff !important;
-            padding: 24px !important;
-            border-radius: 12px !important;
-            border: 1px solid #e5e7eb !important;
-            text-align: center !important;
-            width: 320px !important;
-            font-family: Arial, sans-serif !important;
-            color: #1f2937 !important;
-            box-sizing: border-box !important;
-            margin: 0 !important; 
-        }
-        .nota-icon { font-size: 32px !important; margin-bottom: 8px !important; }
-        .nota-title { font-size: 20px !important; font-weight: bold !important; margin-bottom: 4px !important; color: #1e293b !important; }
-        .nota-id { font-size: 11px !important; color: #6b7280 !important; font-family: monospace !important; margin-bottom: 16px !important; }
-        .nota-status {
-            background-color: #fef3c7 !important;
-            color: #92400e !important;
-            padding: 8px !important;
-            border-radius: 8px !important;
-            font-size: 13px !important;
-            font-weight: bold !important;
-            border: 1px solid #fde68a !important;
-            margin-bottom: 16px !important;
-            text-align: center !important;
-        }
-        .nota-details { text-align: left !important; font-family: monospace !important; font-size: 12px !important; margin-bottom: 16px !important; border-top: 1px dashed #9ca3af !important; padding-top: 8px !important; }
-        .nota-flex { display: flex !important; justify-content: space-between !important; margin-bottom: 6px !important; color: #1f2937 !important; }
-        .nota-total { border-top: 1px dashed #9ca3af !important; padding-top: 6px !important; font-weight: bold !important; color: #4f46e5 !important; font-size: 14px !important; }
-        .nota-footer { font-size: 11px !important; color: #6b7280 !important; line-height: 1.4 !important; border-top: 1px dashed #9ca3af !important; padding-top: 8px !important; text-align: center !important; }
-
-        #notaCaptureWrapper {
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center !important;
-            background-color: #ffffff !important;
-            padding: 20px !important;
-            width: auto !important;
-            height: auto !important;
-        }
-    </style>
 </head>
 <body class="bg-gray-100 min-h-screen p-4 font-sans text-gray-800">
 
     <div class="max-w-md mx-auto space-y-6">
         
+        <!-- HEADER -->
         <div id="headerArea" class="bg-indigo-600 text-white p-4 rounded-xl shadow-md text-center">
-            <h1 class="text-xl font-bold">Sistem Pembayaran Kos</h1>
-            <p class="text-xs opacity-80">Formulir Laporan Penyewa Kamar</p>
-            <p class="text-[10px] font-mono mt-1 opacity-60">V 1.2</p>
+            <h1 class="text-xl font-bold">Griya Ananda</h1>
+            <p class="text-xs opacity-80">Laporan Pembayaran Sewa Hunian</p>
+            <p class="text-[10px] font-mono mt-1 opacity-60">V 1.4</p>
         </div>
 
-        <div id="formArea" class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-            <h2 class="text-lg font-bold mb-4 pb-2 text-gray-700">Lapor Pembayaran</h2>
-            <form id="paymentForm" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">NOMOR KAMAR</label>
-                    <select id="nomorKamar" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm bg-white">
-                        <option value="">⏳ Memuat database kamar...</option>
-                    </select>
+        <!-- AREA FORM & INFO REKENING -->
+        <div id="formArea">
+            
+            <!-- INFO REKENING -->
+            <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl shadow-sm mb-5">
+                <h3 class="text-xs font-bold text-blue-800 mb-3 border-b border-blue-200 pb-2 uppercase tracking-wide">💳 Informasi Rekening Pembayaran</h3>
+                <div class="flex items-center justify-between bg-white p-3 rounded-lg border border-blue-100 shadow-sm mb-2">
+                    <div>
+                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-0.5">Bank Mandiri</p>
+                        <p id="teksRekening" class="font-mono font-black text-gray-800 text-lg tracking-widest">1370010433221</p>
+                    </div>
+                    <button onclick="salinRekening()" type="button" class="bg-blue-100 text-blue-700 hover:bg-blue-200 px-4 py-2 rounded-md text-xs font-bold transition shadow-sm cursor-pointer">
+                        SALIN
+                    </button>
                 </div>
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">NAMA PENYEWA AKTIF</label>
-                    <input type="text" id="namaPenyewa" readonly required class="w-full p-2.5 border rounded-lg bg-gray-50 outline-none text-sm font-semibold text-gray-500">
-                    <input type="hidden" id="noWaPenyewa">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">PERIODE PEMBAYARAN</label>
-                    <select id="periode" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm bg-white">
-                        <option value="1">1 Bulan</option>
-                        <option value="2">2 Bulan</option>
-                        <option value="3">3 Bulan</option>
-                        <option value="4">4 Bulan</option>
-                        <option value="5">5 Bulan</option>
-                        <option value="6">6 Bulan</option>
-                        <option value="7">7 Bulan</option>
-                        <option value="8">8 Bulan</option>
-                        <option value="9">9 Bulan</option>
-                        <option value="10">10 Bulan</option>
-                        <option value="11">11 Bulan</option>
-                        <option value="12">12 Bulan</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">TOTAL JUMLAH BAYAR (Otomatis)</label>
-                    <input type="text" id="jumlahBayarMask" readonly required placeholder="Rp 0" class="w-full p-2.5 border rounded-lg bg-gray-50 outline-none text-sm font-bold text-indigo-700">
-                    <input type="hidden" id="jumlahBayar">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">TANGGAL TRANSFER</label>
-                    <input type="date" id="tanggal" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">UPLOAD BUKTI TRANSFER</label>
-                    <input type="file" id="fileBukti" required accept="image/*,application/pdf" class="w-full p-2 border rounded-lg text-sm bg-gray-50 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
-                </div>
-                <button type="submit" id="btnSubmit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg transition text-sm shadow-md cursor-pointer">
-                    KIRIM LAPORAN PEMBAYARAN
-                </button>
-            </form>
+                <p class="text-xs text-gray-600 font-medium">Atas Nama: <span class="font-bold text-gray-800 uppercase">Yunanto</span></p>
+            </div>
+
+            <!-- FORM INPUT -->
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+                <form id="paymentForm" class="space-y-4">
+                    
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">NOMOR KAMAR</label>
+                        <select id="nomorKamar" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm bg-white">
+                            <option value="">⏳ Memuat daftar kamar...</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">NAMA PENYEWA</label>
+                        <input type="text" id="namaPenyewa" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">NOMOR WHATSAPP</label>
+                        <input type="tel" id="noWa" required placeholder="Contoh: 08123456789" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">PERIODE (BULAN)</label>
+                            <input type="number" id="periode" required min="1" value="1" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">TANGGAL TRANSFER</label>
+                            <input type="date" id="tanggal" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">JUMLAH BAYAR (Hanya Angka)</label>
+                        <input type="number" id="jumlahBayar" required placeholder="Contoh: 1500000" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">UPLOAD BUKTI TRANSFER</label>
+                        <input type="file" id="buktiTransfer" required accept="image/*,.pdf" class="w-full p-2 border rounded-lg text-sm bg-gray-50 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+                    </div>
+
+                    <button type="submit" id="btnSubmit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 mt-2 rounded-lg transition text-sm shadow-md cursor-pointer tracking-wide">
+                        KIRIM LAPORAN PEMBAYARAN
+                    </button>
+                </form>
+            </div>
         </div>
 
-        <div id="wrapperStatus" class="hidden space-y-4">
-            <div id="notaCaptureWrapper">
-                <div id="notaVisual">
-                    <div class="nota-icon">⏳</div>
-                    <div class="nota-title">Laporan Terkirim!</div>
-                    <div class="nota-id">ID: <span id="stId"></span></div>
-                    <div class="nota-status">⚠️ Status: Menunggu Verifikasi Owner</div>
-                    <div class="nota-details">
-                        <div class="nota-flex"><span>KAMAR   :</span><span id="stKamar"></span></div>
-                        <div class="nota-flex"><span>PENYEWA :</span><span id="stPenyewa"></span></div>
-                        <div class="nota-flex"><span>PERIODE :</span><span id="stPeriode"></span></div>
-                        <div class="nota-flex"><span>TANGGAL :</span><span id="stTanggal"></span></div>
-                        <div class="nota-flex nota-total"><span>TOTAL   :</span><span id="stTotal"></span></div>
-                    </div>
-                    <div class="nota-footer">
-                        Data & file bukti transfer Anda telah disimpan di cloud storage sistem internal kos. Pemilik kos akan segera memeriksa laporan ini.
-                    </div>
-                </div>
+        <!-- NOTIFIKASI SUKSES -->
+        <div id="wrapperSuccess" class="hidden bg-white p-6 rounded-xl shadow-md border border-gray-200 text-center space-y-4">
+            <div class="text-5xl">✅</div>
+            <h2 class="text-xl font-bold text-gray-800">Laporan Terkirim!</h2>
+            <div class="w-16 h-1 bg-indigo-600 mx-auto rounded-full"></div>
+            <p class="text-sm text-gray-600 leading-relaxed px-2">
+                Terima kasih, data dan bukti transfer Anda telah masuk ke dalam sistem kami.
+            </p>
+            <div class="bg-amber-50 border border-amber-200 text-amber-900 p-3 rounded-lg text-xs font-semibold">
+                ⏳ Menunggu proses verifikasi dan validasi oleh Pemilik Kos.
             </div>
-            <div class="max-w-[320px] mx-auto">
-                <button id="btnDownloadNota" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md transition">
-                    💾 Simpan Gambar Struk Laporan (.PNG)
-                </button>
-            </div>
+            <p class="text-xs text-gray-500 italic">
+                Kuitansi resmi digital akan dikirimkan secara otomatis ke nomor WhatsApp Anda segera setelah pembayaran diverifikasi.
+            </p>
+            <button onclick="location.reload()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-lg transition text-xs shadow-sm mt-2 uppercase cursor-pointer">
+                Buat Laporan Baru
+            </button>
         </div>
 
     </div>
 
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbyqEB2SCl1Rw9x-ScuHknTldaUD6RPVuUkDyc1czCnR7W1Ar0lQGZquh7wtH7TgMwFK/exec";
-        let dbMasterKamar = [];
+        let masterDataKamar = [];
 
-        document.getElementById('tanggal').value = new Date().toISOString().substring(0, 10);
-
-        const form = document.getElementById('paymentForm');
-        const btnSubmit = document.getElementById('btnSubmit');
-        const wrapperStatus = document.getElementById('wrapperStatus');
-        const selectKamar = document.getElementById('nomorKamar');
-        const inputNama = document.getElementById('namaPenyewa');
-        const inputWa = document.getElementById('noWaPenyewa');
-        const selectPeriode = document.getElementById('periode');
-        const maskInput = document.getElementById('jumlahBayarMask');
-        const realInput = document.getElementById('jumlahBayar');
+        function salinRekening() {
+            const teks = document.getElementById("teksRekening").innerText;
+            navigator.clipboard.writeText(teks).then(() => {
+                alert("Nomor rekening berhasil disalin: " + teks);
+            }).catch(err => {
+                alert("Gagal menyalin nomor rekening.");
+            });
+        }
 
         window.addEventListener('DOMContentLoaded', async () => {
+            const selectKamar = document.getElementById('nomorKamar');
             try {
                 const response = await fetch(API_URL + "?action=getKamar");
                 const result = await response.json();
+                
                 if (result.status === "success") {
-                    dbMasterKamar = result.data;
-                    if (dbMasterKamar.length === 0) {
-                        selectKamar.innerHTML = '<option value="">Daftar kamar di DataMaster kosong</option>';
+                    masterDataKamar = result.data;
+                    
+                    if (masterDataKamar.length === 0) {
+                        selectKamar.innerHTML = '<option value="">Daftar kamar kosong</option>';
                         return;
                     }
+                    
                     selectKamar.innerHTML = '<option value="">-- Pilih Nomor Kamar --</option>';
-                    dbMasterKamar.forEach(item => {
+                    masterDataKamar.forEach(item => {
                         const opt = document.createElement('option');
-                        opt.value = item.kamar.toString().trim();
+                        opt.value = item.kamar;
                         opt.innerText = "Kamar " + item.kamar;
                         selectKamar.appendChild(opt);
                     });
                 } else {
-                    selectKamar.innerHTML = '<option value="">Gagal memuat database</option>';
+                    selectKamar.innerHTML = '<option value="">Gagal memuat daftar kamar</option>';
                 }
             } catch (err) {
                 console.error(err);
-                selectKamar.innerHTML = '<option value="">Gagal terhubung ke database</option>';
+                selectKamar.innerHTML = '<option value="">Gagal terhubung ke server</option>';
             }
         });
 
-        function kalkulasiPembayaran() {
-            const kamarTerpilih = selectKamar.value.toString().trim();
-            const periodeBulan = parseInt(selectPeriode.value) || 1;
+        // Auto-fill nama penyewa & no wa saat kamar dipilih
+        document.getElementById('nomorKamar').addEventListener('change', function() {
+            const kamarTerpilih = this.value;
+            const dataTarget = masterDataKamar.find(k => k.kamar === kamarTerpilih);
             
-            if (!kamarTerpilih) {
-                inputNama.value = "";
-                inputWa.value = "";
-                maskInput.value = "Rp 0";
-                realInput.value = 0;
-                return;
-            }
-            
-            const matchData = dbMasterKamar.find(item => item.kamar.toString().trim() === kamarTerpilih);
-            if (matchData) {
-                inputNama.value = matchData.penyewa;
-                inputWa.value = matchData.no_wa;
+            if (dataTarget) {
+                document.getElementById('namaPenyewa').value = dataTarget.penyewa !== "Belum Ada Penghuni" ? dataTarget.penyewa : "";
+                document.getElementById('noWa').value = dataTarget.no_wa || "";
                 
-                const totalBiaya = matchData.harga * periodeBulan;
-                realInput.value = totalBiaya;
-                maskInput.value = "Rp " + totalBiaya.toLocaleString('id-ID');
+                // Set default tanggal ke hari ini
+                const today = new Date();
+                const yyyy = today.getFullYear();
+                const mm = String(today.getMonth() + 1).padStart(2, '0');
+                const dd = String(today.getDate()).padStart(2, '0');
+                document.getElementById('tanggal').value = `${yyyy}-${mm}-${dd}`;
             }
-        }
-
-        selectKamar.addEventListener('change', kalkulasiPembayaran);
-        selectPeriode.addEventListener('change', kalkulasiPembayaran);
+        });
 
         const convertToBase64 = (file) => {
             return new Promise((resolve, reject) => {
@@ -214,15 +175,17 @@
             });
         };
 
+        const form = document.getElementById('paymentForm');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const wrapperSuccess = document.getElementById('wrapperSuccess');
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (!realInput.value || realInput.value == 0) { alert("Pilih nomor kamar dengan benar!"); return; }
-            if (inputNama.value === "Belum Ada Penghuni" || !inputWa.value) { alert("Kamar ini terdeteksi belum memiliki penghuni terverifikasi!"); return; }
-
+            
             btnSubmit.disabled = true;
-            btnSubmit.innerText = "MENGUPLOAD DATA & BUKTI...";
+            btnSubmit.innerText = "MEMPROSES & MENGUNGGAH BUKTI...";
 
-            const fileInput = document.getElementById('fileBukti').files[0];
+            const fileInput = document.getElementById('buktiTransfer').files[0];
             let fileBase64 = "";
             let fileName = "";
             let fileType = "";
@@ -230,30 +193,22 @@
             if (fileInput) {
                 try {
                     fileBase64 = await convertToBase64(fileInput);
-                    fileName = `BUKTI_BAYAR_${Date.now()}_${fileInput.name.replace(/\s+/g, '_')}`;
+                    fileName = `BUKTI_${Date.now()}_${fileInput.name.replace(/\s+/g, '_')}`;
                     fileType = fileInput.type;
                 } catch (err) { console.error(err); }
             }
 
             const payload = {
-                nomor_kamar: selectKamar.value,
-                nama_penyewa: inputNama.value,
-                no_wa: inputWa.value,
-                periode: parseInt(selectPeriode.value),
-                jumlah_bayar: parseInt(realInput.value),
+                nomor_kamar: document.getElementById('nomorKamar').value,
+                nama_penyewa: document.getElementById('namaPenyewa').value,
+                no_wa: document.getElementById('noWa').value,
+                periode: document.getElementById('periode').value,
+                jumlah_bayar: document.getElementById('jumlahBayar').value,
                 tanggal: document.getElementById('tanggal').value,
                 file_base64: fileBase64,
                 file_name: fileName,
                 file_type: fileType
             };
-
-            const mockId = "KOS-" + Date.now();
-            document.getElementById('stId').innerText = mockId;
-            document.getElementById('stKamar').innerText = payload.nomor_kamar;
-            document.getElementById('stPenyewa').innerText = payload.nama_penyewa;
-            document.getElementById('stPeriode').innerText = payload.periode + " Bulan";
-            document.getElementById('stTotal').innerText = maskInput.value;
-            document.getElementById('stTanggal').innerText = payload.tanggal;
 
             try {
                 const response = await fetch(API_URL, {
@@ -267,52 +222,18 @@
                 if (result.status === "success") {
                     document.getElementById('headerArea').style.display = 'none';
                     document.getElementById('formArea').style.display = 'none';
-                    wrapperStatus.classList.remove('hidden');
+                    wrapperSuccess.classList.remove('hidden');
                     form.reset();
-                    alert("Laporan pembayaran sukses dikirim dan disimpan!");
                 } else {
-                    alert("Gagal dari Server GAS:\n" + result.message);
+                    alert("Gagal mengirim laporan:\n" + result.message);
                 }
-
             } catch (error) {
                 console.error(error);
-                alert("DEBUG ERROR SYSTEM:\n" + error.message);
+                alert("Koneksi gagal: " + error.message);
             } finally {
                 btnSubmit.disabled = false;
                 btnSubmit.innerText = "KIRIM LAPORAN PEMBAYARAN";
             }
-        });
-
-        document.getElementById('btnDownloadNota').addEventListener('click', function() {
-            var btn = this;
-            var originalText = btn.innerHTML;
-            btn.innerHTML = "⏳ Memproses...";
-            btn.disabled = true;
-
-            var targetWrapper = document.getElementById('notaCaptureWrapper');
-            var currentId = document.getElementById('stId').innerText;
-            
-            htmlToImage.toPng(targetWrapper, { 
-                backgroundColor: '#ffffff',
-                pixelRatio: 3 
-            })
-            .then(function (dataUrl) {
-                var link = document.createElement('a');
-                link.download = `Struk_Laporan_${currentId}.png`;
-                link.href = dataUrl;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                btn.innerHTML = "✅ Gambar Berhasil Disimpan";
-                btn.disabled = false;
-            })
-            .catch(function (error) {
-                console.error('oops, something went wrong!', error);
-                alert("Gagal memproses gambar kuitansi: " + error.message);
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            });
         });
     </script>
 </body>
