@@ -3,85 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Registrasi Calon Penyewa Kos</title>
+    <title>Form Registrasi Calon Penyewa Kos GPA</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body class="bg-gray-100 min-h-screen p-4 font-sans text-gray-800">
 
     <div class="max-w-md mx-auto space-y-6">
         
-        <!-- HEADER -->
-        <div id="headerArea" class="bg-blue-600 text-white p-4 rounded-xl shadow-md text-center">
-            <h1 class="text-xl font-bold">Griya Ananda</h1>
-            <p class="text-xs opacity-80">Formulir Registrasi Hunian Kos</p>
-            <p class="text-[10px] font-mono mt-1 opacity-60">V 1.3</p>
+        <div id="headerArea" class="bg-blue-600 text-white p-5 rounded-xl shadow-md text-center">
+            <h1 class="text-xl font-bold">Kos GPA</h1>
+            <p class="text-xs opacity-80">Formulir Registrasi Penghuni</p>
+            <p class="text-[10px] font-mono mt-1 opacity-60">V 1.7</p>
         </div>
 
-        <!-- FORM REGISTRASI -->
         <div id="formArea" class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+            <p class="text-xs text-gray-600 leading-relaxed bg-gray-50 p-3 rounded-lg border border-gray-200 mb-5 italic">
+                Sebagai penyedia jasa kos, kami perlu mengetahui data diri penghuni Kos GPA. Oleh karena itu, kami mohon untuk mengisi form registrasi berikut dengan data yang sesuai. Seluruh data akan dijaga kerahasiaannya dan hanya digunakan untuk kebutuhan internal Kos GPA.
+            </p>
+
             <form id="registrationForm" class="space-y-5">
                 
-                <!-- SECTION DATA PENYEWA -->
                 <div class="space-y-3">
-                    <h3 class="text-sm font-bold text-blue-600 border-b pb-1">DATA CALON PENYEWA</h3>
+                    <h3 class="text-sm font-bold text-blue-600 border-b pb-1 uppercase tracking-wide">I. Identitas Penghuni</h3>
+                    
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">NAMA LENGKAP</label>
-                        <input type="text" id="nama" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">PILIH NOMOR KAMAR</label>
-                        <select id="noKamar" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm bg-white">
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">PILIH NOMOR KAMAR *</label>
+                        <select id="noKamar" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm bg-white font-bold text-blue-700">
                             <option value="">⏳ Memuat daftar kamar...</option>
                         </select>
                     </div>
+
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">ALAMAT ASAL (Sesuai KTP)</label>
-                        <textarea id="alamat" required rows="2" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"></textarea>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">NAMA LENGKAP *</label>
+                        <input type="text" id="nama" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
                     </div>
+
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">NOMOR WHATSAPP</label>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">NOMOR WHATSAPP *</label>
                         <input type="tel" id="noWa" required placeholder="Contoh: 08123456789" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
                     </div>
+
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">UPLOAD FOTO IDENTITAS (KTP/SIM)</label>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">AKTIVITAS UTAMA *</label>
+                        <select id="aktivitasUtama" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm bg-white">
+                            <option value="">-- Pilih Aktivitas --</option>
+                            <option value="Mahasiswa">Mahasiswa</option>
+                            <option value="Karyawan">Karyawan</option>
+                            <option value="Wirausaha">Wirausaha</option>
+                            <option value="Freelancer">Freelancer</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">NAMA KAMPUS / INSTANSI</label>
+                        <input type="text" id="namaInstansi" placeholder="Kosongkan jika tidak ada" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">KENDARAAN YANG DIBAWA *</label>
+                        <select id="kendaraan" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm bg-white">
+                            <option value="">-- Pilih Kendaraan --</option>
+                            <option value="Motor">Motor</option>
+                            <option value="Mobil">Mobil</option>
+                            <option value="Tidak Ada">Tidak Ada</option>
+                        </select>
+                        <p class="text-[10px] text-amber-600 font-medium mt-1">Note: Max 1 unit. Extra charge applied untuk mobil.</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">NOMOR KENDARAAN (PLAT NOMOR) *</label>
+                        <input type="text" id="noKendaraan" required placeholder="Contoh: AB 1234 CD" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm uppercase">
+                        <p class="text-[10px] text-gray-500 mt-1">Note: Otomatis terisi 0000 jika tidak membawa kendaraan.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-3 pt-2">
+                    <h3 class="text-sm font-bold text-blue-600 border-b pb-1 uppercase tracking-wide">II. Lampiran Berkas</h3>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">UPLOAD KARTU IDENTITAS (KTP/SIM) *</label>
                         <input type="file" id="fotoId" required accept="image/*" class="w-full p-2 border rounded-lg text-sm bg-gray-50 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
                     </div>
                 </div>
 
-                <!-- SECTION PENANGGUNG JAWAB -->
                 <div class="space-y-3 pt-2">
-                    <h3 class="text-sm font-bold text-blue-600 border-b pb-1">IDENTITAS PENANGGUNG JAWAB</h3>
+                    <div class="border-b pb-1 flex items-center justify-between">
+                        <h3 class="text-sm font-bold text-blue-600 uppercase tracking-wide">III. Penanggung Jawab</h3>
+                        <span class="text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded font-bold uppercase tracking-wider">Akan Diverifikasi</span>
+                    </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">NAMA PENANGGUNG JAWAB</label>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">NAMA PENANGGUNG JAWAB *</label>
                         <input type="text" id="pjNama" required placeholder="Nama Orang Tua / Wali / Saudara" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">STATUS / HUBUNGAN</label>
-                        <input type="text" id="pjStatus" required placeholder="Contoh: Ayah, Ibu, Kakak" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">HUBUNGAN *</label>
+                        <input type="text" id="pjStatus" required placeholder="Contoh: Ayah, Ibu, Kakak, Paman" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">ALAMAT PENANGGUNG JAWAB</label>
-                        <textarea id="pjAlamat" required rows="2" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"></textarea>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">NOMOR WA PENANGGUNG JAWAB</label>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">NOMOR WHATSAPP PJ *</label>
                         <input type="tel" id="pjWa" required placeholder="Contoh: 08123456789" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">DOMISILI PENANGGUNG JAWAB *</label>
+                        <textarea id="pjDomisili" required rows="2" placeholder="Alamat lengkap domisili penanggung jawab" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"></textarea>
                     </div>
                 </div>
 
-                <button type="submit" id="btnSubmit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition text-sm shadow-md cursor-pointer tracking-wide">
-                    AJUKAN REGISTRASI HUNIAN
+                <div class="space-y-3 pt-2 bg-gray-50 p-3 rounded-lg border border-gray-200">
+                    <div class="flex items-start shadow-sm">
+                        <input type="checkbox" id="chkTertib" required class="mt-1 mr-2.5 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer">
+                        <label for="chkTertib" class="text-xs text-gray-700 font-medium select-none cursor-pointer">Telah memahami dan setuju dengan tata tertib kos *</label>
+                    </div>
+                    <div class="flex items-start shadow-sm">
+                        <input type="checkbox" id="chkFasilitas" required class="mt-1 mr-2.5 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer">
+                        <label for="chkFasilitas" class="text-xs text-gray-700 font-medium select-none cursor-pointer">Telah mengisi checklist fasilitas kamar *</label>
+                    </div>
+                </div>
+
+                <button type="submit" id="btnSubmit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-lg transition text-sm shadow-md cursor-pointer tracking-wide uppercase">
+                    KIRIM DATA REGISTRASI
                 </button>
             </form>
         </div>
 
-        <!-- NOTIFIKASI SUKSES VERIFIKASI -->
         <div id="wrapperSuccess" class="hidden bg-white p-6 rounded-xl shadow-md border border-gray-200 text-center space-y-4">
             <div class="text-5xl">📝</div>
             <h2 class="text-xl font-bold text-gray-800">Registrasi Berhasil Dikirim!</h2>
             <div class="w-16 h-1 bg-blue-600 mx-auto rounded-full"></div>
             <p class="text-sm text-gray-600 leading-relaxed px-2">
-                Data registrasi dan berkas foto identitas Anda telah masuk ke dalam sistem antrean admin kos. 
+                Data registrasi dan berkas foto identitas Anda telah masuk ke dalam sistem antrean admin Kos GPA. 
             </p>
             <div class="bg-amber-50 border border-amber-200 text-amber-900 p-3 rounded-lg text-xs font-semibold">
                 ⏳ Status saat ini: Data sedang dalam proses verifikasi owner.
@@ -96,6 +146,21 @@
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbyqEB2SCl1Rw9x-ScuHknTldaUD6RPVuUkDyc1czCnR7W1Ar0lQGZquh7wtH7TgMwFK/exec";
 
+        // Efek Otomatisasi Input Kendaraan & No Kendaraan
+        document.getElementById('kendaraan').addEventListener('change', function() {
+            const val = this.value;
+            const inputNoKen = document.getElementById('noKendaraan');
+            if (val === "Tidak Ada") {
+                inputNoKen.value = "0000";
+                inputNoKen.readOnly = true;
+                inputNoKen.classList.add('bg-gray-50', 'text-gray-400', 'cursor-not-allowed');
+            } else {
+                if (inputNoKen.value === "0000") inputNoKen.value = "";
+                inputNoKen.readOnly = false;
+                inputNoKen.classList.remove('bg-gray-50', 'text-gray-400', 'cursor-not-allowed');
+            }
+        });
+
         window.addEventListener('DOMContentLoaded', async () => {
             const selectKamar = document.getElementById('noKamar');
             try {
@@ -109,7 +174,6 @@
                     selectKamar.innerHTML = '<option value="">-- Pilih Nomor Kamar --</option>';
                     result.data.forEach(item => {
                         const opt = document.createElement('option');
-                        // Fix: Ambil properti item.kamar untuk menampilkan nomor kamar dengan benar
                         opt.value = item.kamar;
                         opt.innerText = "Kamar " + item.kamar;
                         selectKamar.appendChild(opt);
@@ -155,14 +219,21 @@
                 } catch (err) { console.error(err); }
             }
 
+            // Gabungkan data penunjang penyewa ke satu field alamat agar backend sheets menerima data utuh
+            const aktivitas = document.getElementById('aktivitasUtama').value;
+            const instansi = document.getElementById('namaInstansi').value || "-";
+            const kendaraan = document.getElementById('kendaraan').value;
+            const noKendaraan = document.getElementById('noKendaraan').value;
+            const gabungInfoPenyewa = `Aktivitas: ${aktivitas} (${instansi}) | Kendaraan: ${kendaraan} [${noKendaraan.toUpperCase()}]`;
+
             const payload = {
                 nama: document.getElementById('nama').value,
                 no_kamar: document.getElementById('noKamar').value,
-                alamat: document.getElementById('alamat').value,
+                alamat: gabungInfoPenyewa, // Dioper ke kolom F (Alamat Penyewa)
                 no_wa: document.getElementById('noWa').value,
                 pj_nama: document.getElementById('pjNama').value,
                 pj_status: document.getElementById('pjStatus').value,
-                pj_alamat: document.getElementById('pjAlamat').value,
+                pj_alamat: document.getElementById('pjDomisili').value,
                 pj_wa: document.getElementById('pjWa').value,
                 file_base64: fileBase64,
                 file_name: fileName,
@@ -191,7 +262,7 @@
                 alert("Koneksi gagal: " + error.message);
             } finally {
                 btnSubmit.disabled = false;
-                btnSubmit.innerText = "AJUKAN REGISTRASI HUNIAN";
+                btnSubmit.innerText = "KIRIM DATA REGISTRASI";
             }
         });
     </script>
